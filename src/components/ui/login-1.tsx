@@ -125,7 +125,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
   ];
 
   return (
-    <div className="min-h-screen w-full fixed inset-0 flex items-center justify-center p-4" style={{ backgroundColor, zIndex: 0 }}>
+    <div className="min-h-screen w-full fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ backgroundColor }}>
       {/* Theme Switcher Button */}
       <div className="absolute top-4 right-4 z-50 bg-white rounded-lg p-1 shadow-lg border border-gray-300">
         <ThemeSwitcher />
