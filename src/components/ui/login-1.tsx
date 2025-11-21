@@ -198,7 +198,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
               <div className='bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2'>
                 <p className='text-xs font-semibold text-blue-900 mb-1'>Credenciais de Teste:</p>
                 <p className='text-xs text-blue-700'>
-                  <strong>Email:</strong> teste@exemplo.com<br />
+                  <strong>E-mail:</strong> teste@exemplo.com<br />
                   <strong>Senha:</strong> Senha123!
                 </p>
               </div>

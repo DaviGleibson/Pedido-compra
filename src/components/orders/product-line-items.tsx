@@ -143,7 +143,7 @@ export function ProductLineItems({ items, onChange }: ProductLineItemsProps) {
               <Input
                 value={item.productName}
                 onChange={(e) => updateItem(item.id, 'productName', e.target.value)}
-                placeholder="Enter product name"
+                placeholder="Digite o nome do produto"
                 required
               />
             </div>

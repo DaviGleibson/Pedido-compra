@@ -8,8 +8,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "PurchaseFlow - Purchase Order Management",
-  description: "Modern purchase order management system for streamlined procurement",
+  title: "PurchaseFlow - Gerenciamento de Pedidos de Compra",
+  description: "Sistema moderno de gerenciamento de pedidos de compra para compras simplificadas",
 };
 
 export default function RootLayout({
@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="pt-BR" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
