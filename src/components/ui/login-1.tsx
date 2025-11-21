@@ -35,7 +35,7 @@ const AppInput = (props: InputProps) => {
       <div className="relative w-full">
         <input
           type="text"
-          className="peer relative z-10 border-2 border-gray-300 dark:border-[var(--color-border)] h-13 w-full rounded-md bg-white dark:bg-[var(--color-surface)] px-4 font-thin outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-gray-50 dark:focus:bg-[var(--color-bg)] placeholder:font-medium text-gray-900 dark:text-[var(--color-text-primary)] placeholder:text-gray-500 dark:placeholder:text-gray-400"
+          className="peer relative z-10 border-2 border-gray-300 h-13 w-full rounded-md bg-white px-4 font-thin outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-gray-50 focus:border-[#132d5b] placeholder:font-medium text-gray-900 placeholder:text-gray-500"
           placeholder={placeholder}
           onMouseMove={handleMouseMove}
           onMouseEnter={() => setIsHovering(true)}
@@ -47,13 +47,13 @@ const AppInput = (props: InputProps) => {
             <div
               className="absolute pointer-events-none top-0 left-0 right-0 h-[2px] z-20 rounded-t-md overflow-hidden"
               style={{
-                background: `radial-gradient(30px circle at ${mousePosition.x}px 0px, var(--color-text-primary) 0%, transparent 70%)`,
+                background: `radial-gradient(30px circle at ${mousePosition.x}px 0px, #132d5b 0%, transparent 70%)`,
               }}
             />
             <div
               className="absolute pointer-events-none bottom-0 left-0 right-0 h-[2px] z-20 rounded-b-md overflow-hidden"
               style={{
-                background: `radial-gradient(30px circle at ${mousePosition.x}px 2px, var(--color-text-primary) 0%, transparent 70%)`,
+                background: `radial-gradient(30px circle at ${mousePosition.x}px 2px, #132d5b 0%, transparent 70%)`,
               }}
             />
           </>
@@ -122,11 +122,11 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
   return (
     <div className="min-h-screen w-full fixed inset-0 flex items-center justify-center p-4" style={{ backgroundColor: '#132d5b', zIndex: 0 }}>
       {/* Theme Switcher Button */}
-      <div className="absolute top-4 right-4 z-50 bg-[var(--color-surface)] rounded-lg p-1 shadow-lg border border-[var(--color-border)]">
+      <div className="absolute top-4 right-4 z-50 bg-white rounded-lg p-1 shadow-lg border border-gray-300">
         <ThemeSwitcher />
       </div>
 
-      <div className='card w-[80%] lg:w-[70%] md:w-[55%] flex justify-between h-[600px] bg-gray-50 dark:bg-[var(--color-surface)] rounded-lg shadow-xl overflow-hidden'>
+      <div className='card w-[80%] lg:w-[70%] md:w-[55%] flex justify-between h-[600px] bg-white rounded-lg shadow-xl overflow-hidden'>
         <div
           className='w-full lg:w-1/2 px-4 lg:px-16 left h-full relative overflow-hidden'
           onMouseMove={handleMouseMove}
@@ -144,7 +144,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
           <div className="form-container sign-in-container h-full z-10 relative">
             <form className='text-center py-10 md:py-20 grid gap-2 h-full' onSubmit={handleSubmit}>
               <div className='grid gap-4 md:gap-6 mb-2'>
-                <h1 className='text-3xl md:text-4xl font-extrabold text-black dark:text-[var(--color-heading)]'>Sign in</h1>
+                <h1 className='text-3xl md:text-4xl font-extrabold text-gray-900'>Sign in</h1>
                 <div className="social-container">
                   <div className="flex items-center justify-center">
                     <ul className="flex gap-3 md:gap-4">
@@ -154,14 +154,14 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
                             <a
                               href={social.href}
                               onClick={(e: React.MouseEvent<HTMLAnchorElement>) => e.preventDefault()}
-                              className={`w-[2.5rem] md:w-[3rem] h-[2.5rem] md:h-[3rem] bg-[var(--color-bg-2)] rounded-full flex justify-center items-center relative z-[1] border-3 border-[var(--color-text-primary)] overflow-hidden group`}
+                              className={`w-[2.5rem] md:w-[3rem] h-[2.5rem] md:h-[3rem] bg-gray-200 rounded-full flex justify-center items-center relative z-[1] border-2 border-gray-300 overflow-hidden group hover:bg-gray-300 transition-colors`}
                             >
                               <div
                                 className={`absolute inset-0 w-full h-full ${
                                   social.gradient || social.bg
                                 } scale-y-0 origin-bottom transition-transform duration-500 ease-in-out group-hover:scale-y-100`}
                               />
-                              <span className="text-[1.5rem] dark:text-[hsl(203,92%,8%)] text-[hsl(203,92%,8%)] transition-all duration-500 ease-in-out z-[2] group-hover:text-[var(--color-text-primary)] group-hover:rotate-y-360">
+                              <span className="text-[1.5rem] text-gray-700 transition-all duration-500 ease-in-out z-[2] group-hover:text-gray-900 group-hover:rotate-y-360">
                                 {social.icon}
                               </span>
                             </a>
@@ -171,7 +171,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
                     </ul>
                   </div>
                 </div>
-                <span className='text-sm text-gray-600 dark:text-[var(--color-text-secondary)]'>or use your account</span>
+                <span className='text-sm text-gray-600'>or use your account</span>
               </div>
               <div className='grid gap-4 items-center'>
                 <AppInput 
@@ -187,11 +187,11 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                 />
               </div>
-              <a href="#" className='font-light text-sm md:text-md text-gray-600 dark:text-[var(--color-text-secondary)] hover:text-gray-900 dark:hover:text-[var(--color-text-primary)] transition-colors'>Forgot your password?</a>
+              <a href="#" className='font-light text-sm md:text-md text-gray-600 hover:text-gray-900 transition-colors'>Forgot your password?</a>
               <div className='flex gap-4 justify-center items-center'>
                 <button 
                   type="submit"
-                  className="group/button relative inline-flex justify-center items-center overflow-hidden rounded-md bg-[var(--color-border)] px-4 py-1.5 text-xs font-normal text-white transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg hover:shadow-[var(--color-text-primary)] cursor-pointer"
+                  className="group/button relative inline-flex justify-center items-center overflow-hidden rounded-md bg-[#132d5b] px-4 py-1.5 text-xs font-normal text-white transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg hover:shadow-[#132d5b]/50 hover:bg-[#1a3d6b] cursor-pointer"
                 >
                   <span className="text-sm px-2 py-1">Sign In</span>
                   <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-13deg)_translateX(-100%)] group-hover/button:duration-1000 group-hover/button:[transform:skew(-13deg)_translateX(100%)]">
