@@ -18,7 +18,7 @@ export default function Page() {
           </div>
           <Link href="/login">
             <Button className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700">
-              Sign In
+              Entrar
             </Button>
           </Link>
         </div>
@@ -29,31 +29,31 @@ export default function Page() {
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <div className="inline-block">
             <span className="px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 text-sm font-semibold">
-              Modern Purchase Order Management
+              Gerenciamento Moderno de Pedidos de Compra
             </span>
           </div>
           
           <h1 className="text-5xl md:text-7xl font-bold leading-tight">
             <span className="bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Streamline Your
+              Simplifique Seus
             </span>
             <br />
-            <span className="text-slate-900">Purchase Orders</span>
+            <span className="text-slate-900">Pedidos de Compra</span>
           </h1>
           
           <p className="text-xl md:text-2xl text-slate-600 max-w-2xl mx-auto">
-            Manage suppliers, track orders, and automate your procurement process with our intuitive platform.
+            Gerencie fornecedores, acompanhe pedidos e automatize seu processo de compras com nossa plataforma intuitiva.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
             <Link href="/login">
               <Button size="lg" className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-lg px-8 py-6 group">
-                Get Started
+                Começar
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
             <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-2">
-              Watch Demo
+              Ver Demonstração
             </Button>
           </div>
         </div>
@@ -66,9 +66,9 @@ export default function Page() {
             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center mb-4">
               <FileText className="h-6 w-6 text-white" />
             </div>
-            <h3 className="text-xl font-bold mb-3 text-slate-900">Easy Order Creation</h3>
+            <h3 className="text-xl font-bold mb-3 text-slate-900">Criação Fácil de Pedidos</h3>
             <p className="text-slate-600">
-              Create and manage purchase orders with our intuitive multi-step form. Add products, set terms, and submit in minutes.
+              Crie e gerencie pedidos de compra com nosso formulário intuitivo de múltiplas etapas. Adicione produtos, defina termos e envie em minutos.
             </p>
           </div>
 
@@ -76,9 +76,9 @@ export default function Page() {
             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-4">
               <TrendingUp className="h-6 w-6 text-white" />
             </div>
-            <h3 className="text-xl font-bold mb-3 text-slate-900">Real-time Tracking</h3>
+            <h3 className="text-xl font-bold mb-3 text-slate-900">Acompanhamento em Tempo Real</h3>
             <p className="text-slate-600">
-              Monitor order status from draft to completion. Get instant updates and maintain full visibility of your procurement pipeline.
+              Monitore o status dos pedidos do rascunho à conclusão. Receba atualizações instantâneas e mantenha visibilidade completa do seu pipeline de compras.
             </p>
           </div>
 
@@ -86,9 +86,9 @@ export default function Page() {
             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-4">
               <Shield className="h-6 w-6 text-white" />
             </div>
-            <h3 className="text-xl font-bold mb-3 text-slate-900">Secure & Reliable</h3>
+            <h3 className="text-xl font-bold mb-3 text-slate-900">Seguro e Confiável</h3>
             <p className="text-slate-600">
-              Enterprise-grade security with role-based access control. Your data is encrypted and backed up automatically.
+              Segurança de nível empresarial com controle de acesso baseado em funções. Seus dados são criptografados e copiados automaticamente.
             </p>
           </div>
         </div>
@@ -97,7 +97,7 @@ export default function Page() {
       {/* Footer */}
       <footer className="border-t bg-white/80 backdrop-blur-md mt-20">
         <div className="container mx-auto px-4 py-8 text-center text-slate-600">
-          <p>&copy; 2024 PurchaseFlow. All rights reserved.</p>
+          <p>&copy; 2024 PurchaseFlow. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>

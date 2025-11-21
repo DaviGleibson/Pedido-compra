@@ -154,14 +154,14 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
                             <a
                               href={social.href}
                               onClick={(e: React.MouseEvent<HTMLAnchorElement>) => e.preventDefault()}
-                              className={`w-[2.5rem] md:w-[3rem] h-[2.5rem] md:h-[3rem] bg-gray-200 rounded-full flex justify-center items-center relative z-[1] border-2 border-gray-300 overflow-hidden group hover:bg-gray-300 transition-colors`}
+                              className={`w-[2.5rem] md:w-[3rem] h-[2.5rem] md:h-[3rem] bg-[#132d5b] rounded-full flex justify-center items-center relative z-[1] border-2 border-[#132d5b] overflow-hidden group hover:bg-[#1a3d6b] transition-colors`}
                             >
                               <div
                                 className={`absolute inset-0 w-full h-full ${
                                   social.gradient || social.bg
                                 } scale-y-0 origin-bottom transition-transform duration-500 ease-in-out group-hover:scale-y-100`}
                               />
-                              <span className="text-[1.5rem] text-gray-700 transition-all duration-500 ease-in-out z-[2] group-hover:text-gray-900 group-hover:rotate-y-360">
+                              <span className="text-[1.5rem] text-white transition-all duration-500 ease-in-out z-[2] group-hover:text-white group-hover:rotate-y-360">
                                 {social.icon}
                               </span>
                             </a>
@@ -188,12 +188,22 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
                 />
               </div>
               <a href="#" className='font-light text-sm md:text-md text-gray-600 hover:text-gray-900 transition-colors'>Forgot your password?</a>
+              
+              {/* Credenciais de Teste */}
+              <div className='bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2'>
+                <p className='text-xs font-semibold text-blue-900 mb-1'>Credenciais de Teste:</p>
+                <p className='text-xs text-blue-700'>
+                  <strong>Email:</strong> teste@exemplo.com<br />
+                  <strong>Senha:</strong> Senha123!
+                </p>
+              </div>
+
               <div className='flex gap-4 justify-center items-center'>
                 <button 
                   type="submit"
                   className="group/button relative inline-flex justify-center items-center overflow-hidden rounded-md bg-[#132d5b] px-4 py-1.5 text-xs font-normal text-white transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg hover:shadow-[#132d5b]/50 hover:bg-[#1a3d6b] cursor-pointer"
                 >
-                  <span className="text-sm px-2 py-1">Sign In</span>
+                  <span className="text-sm px-2 py-1">Entrar</span>
                   <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-13deg)_translateX(-100%)] group-hover/button:duration-1000 group-hover/button:[transform:skew(-13deg)_translateX(100%)]">
                     <div className="relative h-full w-8 bg-white/20" />
                   </div>
