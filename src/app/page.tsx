@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ShoppingCart, FileText, TrendingUp, Shield } from 'lucide-react';
 
+// Página principal em português
+
 export default function Page() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">

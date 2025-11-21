@@ -224,7 +224,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
             width={1000}
             height={1000}
             priority
-            alt="Carousel image"
+            alt="Imagem do carrossel"
             className="w-full h-full object-cover transition-transform duration-300 opacity-30 grayscale"
           />
         </div>
