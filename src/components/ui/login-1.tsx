@@ -4,6 +4,7 @@ import * as React from 'react'
 import { useState } from 'react'
 import Image from 'next/image';
 import { ThemeSwitcher } from '@/components/theme-switcher';
+import { useTheme } from 'next-themes';
 
 interface InputProps {
   label?: string;
@@ -73,10 +74,14 @@ interface LoginComponentProps {
 }
 
 const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
+  const { theme } = useTheme();
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  
+  // Cor de fundo baseada no tema: branco para light, azul para dark
+  const backgroundColor = theme === 'light' ? '#ffffff' : '#1e40af';
 
   const handleMouseMove = (e: React.MouseEvent) => {
     const leftSection = e.currentTarget.getBoundingClientRect();
@@ -120,7 +125,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
   ];
 
   return (
-    <div className="min-h-screen w-full fixed inset-0 flex items-center justify-center p-4" style={{ backgroundColor: '#132d5b', zIndex: 0 }}>
+    <div className="min-h-screen w-full fixed inset-0 flex items-center justify-center p-4" style={{ backgroundColor, zIndex: 0 }}>
       {/* Theme Switcher Button */}
       <div className="absolute top-4 right-4 z-50 bg-white rounded-lg p-1 shadow-lg border border-gray-300">
         <ThemeSwitcher />
@@ -144,7 +149,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
           <div className="form-container sign-in-container h-full z-10 relative">
             <form className='text-center py-10 md:py-20 grid gap-2 h-full' onSubmit={handleSubmit}>
               <div className='grid gap-4 md:gap-6 mb-2'>
-                <h1 className='text-3xl md:text-4xl font-extrabold text-gray-900'>Sign in</h1>
+                <h1 className='text-3xl md:text-4xl font-extrabold text-gray-900'>Entrar</h1>
                 <div className="social-container">
                   <div className="flex items-center justify-center">
                     <ul className="flex gap-3 md:gap-4">
@@ -171,23 +176,23 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
                     </ul>
                   </div>
                 </div>
-                <span className='text-sm text-gray-600'>or use your account</span>
+                <span className='text-sm text-gray-600'>ou use sua conta</span>
               </div>
               <div className='grid gap-4 items-center'>
                 <AppInput 
-                  placeholder="Email" 
+                  placeholder="E-mail" 
                   type="email"
                   value={email}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                 />
                 <AppInput 
-                  placeholder="Password" 
+                  placeholder="Senha" 
                   type="password"
                   value={password}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                 />
               </div>
-              <a href="#" className='font-light text-sm md:text-md text-gray-600 hover:text-gray-900 transition-colors'>Forgot your password?</a>
+              <a href="#" className='font-light text-sm md:text-md text-gray-600 hover:text-gray-900 transition-colors'>Esqueceu sua senha?</a>
               
               {/* Credenciais de Teste */}
               <div className='bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2'>
