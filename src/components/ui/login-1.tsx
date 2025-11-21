@@ -150,6 +150,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
             <form className='text-center py-10 md:py-20 grid gap-2 h-full' onSubmit={handleSubmit}>
               <div className='grid gap-4 md:gap-6 mb-2'>
                 <h1 className='text-3xl md:text-4xl font-extrabold text-gray-900'>Entrar</h1>
+                {/* Título em português */}
                 <div className="social-container">
                   <div className="flex items-center justify-center">
                     <ul className="flex gap-3 md:gap-4">
