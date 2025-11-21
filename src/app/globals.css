@@ -31,7 +31,7 @@
     --chart-5: 27 87% 67%;
     
     /* Login component variables - Light theme */
-    --color-bg: #ffffff;
+    --color-bg: #132d5b;
     --color-surface: #f8f9fa;
     --color-muted-surface: #e9ecef;
     --color-border: #dee2e6;
@@ -72,7 +72,7 @@
     --chart-5: 340 75% 55%;
     
     /* Login component variables - Dark theme */
-    --color-bg: #101214;
+    --color-bg: #132d5b;
     --color-surface: #161A1D;
     --color-muted-surface: #1D2125;
     --color-border: #2C333A;

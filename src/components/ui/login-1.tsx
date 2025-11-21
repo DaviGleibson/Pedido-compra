@@ -35,7 +35,7 @@ const AppInput = (props: InputProps) => {
       <div className="relative w-full">
         <input
           type="text"
-          className="peer relative z-10 border-2 border-[var(--color-border)] h-13 w-full rounded-md bg-[var(--color-surface)] px-4 font-thin outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-[var(--color-bg)] placeholder:font-medium text-[var(--color-text-primary)]"
+          className="peer relative z-10 border-2 border-gray-300 dark:border-[var(--color-border)] h-13 w-full rounded-md bg-white dark:bg-[var(--color-surface)] px-4 font-thin outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-gray-50 dark:focus:bg-[var(--color-bg)] placeholder:font-medium text-gray-900 dark:text-[var(--color-text-primary)] placeholder:text-gray-500 dark:placeholder:text-gray-400"
           placeholder={placeholder}
           onMouseMove={handleMouseMove}
           onMouseEnter={() => setIsHovering(true)}
@@ -126,7 +126,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
         <ThemeSwitcher />
       </div>
 
-      <div className='card w-[80%] lg:w-[70%] md:w-[55%] flex justify-between h-[600px] bg-[var(--color-surface)] rounded-lg shadow-xl overflow-hidden'>
+      <div className='card w-[80%] lg:w-[70%] md:w-[55%] flex justify-between h-[600px] bg-gray-50 dark:bg-[var(--color-surface)] rounded-lg shadow-xl overflow-hidden'>
         <div
           className='w-full lg:w-1/2 px-4 lg:px-16 left h-full relative overflow-hidden'
           onMouseMove={handleMouseMove}
@@ -144,7 +144,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
           <div className="form-container sign-in-container h-full z-10 relative">
             <form className='text-center py-10 md:py-20 grid gap-2 h-full' onSubmit={handleSubmit}>
               <div className='grid gap-4 md:gap-6 mb-2'>
-                <h1 className='text-3xl md:text-4xl font-extrabold text-[var(--color-heading)]'>Sign in</h1>
+                <h1 className='text-3xl md:text-4xl font-extrabold text-black dark:text-[var(--color-heading)]'>Sign in</h1>
                 <div className="social-container">
                   <div className="flex items-center justify-center">
                     <ul className="flex gap-3 md:gap-4">
@@ -153,7 +153,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
                           <li key={index} className="list-none">
                             <a
                               href={social.href}
-                              onClick={(e) => e.preventDefault()}
+                              onClick={(e: React.MouseEvent<HTMLAnchorElement>) => e.preventDefault()}
                               className={`w-[2.5rem] md:w-[3rem] h-[2.5rem] md:h-[3rem] bg-[var(--color-bg-2)] rounded-full flex justify-center items-center relative z-[1] border-3 border-[var(--color-text-primary)] overflow-hidden group`}
                             >
                               <div
@@ -171,7 +171,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
                     </ul>
                   </div>
                 </div>
-                <span className='text-sm text-[var(--color-text-secondary)]'>or use your account</span>
+                <span className='text-sm text-gray-600 dark:text-[var(--color-text-secondary)]'>or use your account</span>
               </div>
               <div className='grid gap-4 items-center'>
                 <AppInput 
@@ -187,7 +187,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                 />
               </div>
-              <a href="#" className='font-light text-sm md:text-md text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors'>Forgot your password?</a>
+              <a href="#" className='font-light text-sm md:text-md text-gray-600 dark:text-[var(--color-text-secondary)] hover:text-gray-900 dark:hover:text-[var(--color-text-primary)] transition-colors'>Forgot your password?</a>
               <div className='flex gap-4 justify-center items-center'>
                 <button 
                   type="submit"
