@@ -19,9 +19,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { ProductLineItems } from './product-line-items';
-import { mockCompanies, mockSuppliers } from '@/lib/mock-data';
-import { ProductLineItem, PaymentTerms, PaymentType } from '@/types';
+import { ProductSelector } from './product-selector';
+import { mockCompanies, mockSuppliers, mockProducts } from '@/lib/mock-data';
+import { ProductLineItem, Product } from '@/types';
 import { Loader2 } from 'lucide-react';
 
 interface NewOrderFormProps {
@@ -42,17 +42,7 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
   const [buyerEmail, setBuyerEmail] = useState('');
   const [buyerPhone, setBuyerPhone] = useState('');
   const [buyerDepartment, setBuyerDepartment] = useState('');
-  const [paymentTerms, setPaymentTerms] = useState<PaymentTerms>('net_30');
-  const [paymentType, setPaymentType] = useState<PaymentType>('credit_card');
-  const [lineItems, setLineItems] = useState<ProductLineItem[]>([
-    {
-      id: '1',
-      productName: '',
-      quantity: 1,
-      unitPrice: 0,
-      total: 0,
-    },
-  ]);
+  const [lineItems, setLineItems] = useState<ProductLineItem[]>([]);
 
   const loggedUser = 'Sarah Johnson'; // Mock logged user
 
@@ -94,17 +84,7 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
     setBuyerEmail('');
     setBuyerPhone('');
     setBuyerDepartment('');
-    setPaymentTerms('net_30');
-    setPaymentType('credit_card');
-    setLineItems([
-      {
-        id: '1',
-        productName: '',
-        quantity: 1,
-        unitPrice: 0,
-        total: 0,
-      },
-    ]);
+    setLineItems([]);
   };
 
   const canProceedToNextStep = () => {
@@ -118,8 +98,6 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
       case 4:
         return true; // Logged user is read-only
       case 5:
-        return paymentTerms && paymentType;
-      case 6:
         return lineItems.length > 0 && lineItems.every(item => 
           item.productName && item.quantity > 0 && item.unitPrice > 0
         );
@@ -128,9 +106,63 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
     }
   };
 
+  const handleAddProduct = (product: Product, quantity: number) => {
+    const existingItem = lineItems.find((item) => item.productCode === product.codigo);
+    
+    if (existingItem) {
+      // Atualizar quantidade se já existe
+      const updatedItems = lineItems.map((item) => {
+        if (item.productCode === product.codigo) {
+          const newQuantity = item.quantity + quantity;
+          return {
+            ...item,
+            quantity: newQuantity,
+            total: newQuantity * item.unitPrice,
+          };
+        }
+        return item;
+      });
+      setLineItems(updatedItems);
+    } else {
+      // Adicionar novo item
+      const newItem: ProductLineItem = {
+        id: Date.now().toString(),
+        productName: product.descricao,
+        productCode: product.codigo,
+        quantity: quantity,
+        unitPrice: product.valor_caixa,
+        total: quantity * product.valor_caixa,
+      };
+      setLineItems([...lineItems, newItem]);
+    }
+  };
+
+  const handleUpdateQuantity = (productCode: number, quantity: number) => {
+    if (quantity <= 0) {
+      handleRemoveProduct(productCode);
+      return;
+    }
+    
+    const updatedItems = lineItems.map((item) => {
+      if (item.productCode === productCode) {
+        return {
+          ...item,
+          quantity: quantity,
+          total: quantity * item.unitPrice,
+        };
+      }
+      return item;
+    });
+    setLineItems(updatedItems);
+  };
+
+  const handleRemoveProduct = (productCode: number) => {
+    setLineItems(lineItems.filter((item) => item.productCode !== productCode));
+  };
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto">
+      <SheetContent side="right" className="w-full sm:max-w-4xl overflow-y-auto">
         <SheetHeader>
           <SheetTitle className="text-2xl">Criar Novo Pedido de Compra</SheetTitle>
         </SheetHeader>
@@ -138,7 +170,7 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
         <form onSubmit={(e) => handleSubmit(e, false)} className="mt-6 space-y-6">
           {/* Step Indicator */}
           <div className="flex items-center justify-between">
-            {[1, 2, 3, 4, 5, 6].map((step) => (
+            {[1, 2, 3, 4, 5].map((step) => (
               <div key={step} className="flex items-center">
                 <div
                   className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold ${
@@ -151,7 +183,7 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
                 >
                   {step}
                 </div>
-                {step < 6 && (
+                {step < 5 && (
                   <div
                     className={`h-1 w-8 ${
                       step < currentStep ? 'bg-emerald-500' : 'bg-slate-200'
@@ -266,65 +298,65 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
             </div>
           )}
 
-          {/* Step 5: Payment */}
+          {/* Step 5: Products */}
           {currentStep === 5 && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold mb-4">Informações de Pagamento</h3>
-              <div className="space-y-2">
-                <Label htmlFor="paymentTerms">Termos de Pagamento *</Label>
-                <Select value={paymentTerms} onValueChange={(value) => setPaymentTerms(value as PaymentTerms)}>
-                  <SelectTrigger id="paymentTerms">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="net_30">Líquido 30</SelectItem>
-                    <SelectItem value="net_60">Líquido 60</SelectItem>
-                    <SelectItem value="net_90">Líquido 90</SelectItem>
-                    <SelectItem value="due_on_receipt">Vencimento na Recepção</SelectItem>
-                    <SelectItem value="prepaid">Pré-pago</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="paymentType">Tipo de Pagamento *</Label>
-                <Select value={paymentType} onValueChange={(value) => setPaymentType(value as PaymentType)}>
-                  <SelectTrigger id="paymentType">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="credit_card">Cartão de Crédito</SelectItem>
-                    <SelectItem value="bank_transfer">Transferência Bancária</SelectItem>
-                    <SelectItem value="check">Cheque</SelectItem>
-                    <SelectItem value="cash">Dinheiro</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          )}
-
-          {/* Step 6: Line Items */}
-          {currentStep === 6 && (
-            <div className="space-y-4">
-              <ProductLineItems items={lineItems} onChange={setLineItems} />
+              <ProductSelector
+                selectedItems={lineItems}
+                onAddProduct={handleAddProduct}
+                onUpdateQuantity={handleUpdateQuantity}
+                onRemoveProduct={handleRemoveProduct}
+              />
               
               <Separator />
 
+              {/* Resumo dos Itens Selecionados */}
+              {lineItems.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-slate-900">Itens Selecionados</h4>
+                  <div className="border rounded-lg overflow-hidden">
+                    <table className="w-full text-sm">
+                      <thead className="bg-slate-50">
+                        <tr>
+                          <th className="text-left p-2 text-xs font-semibold text-slate-700">Produto</th>
+                          <th className="text-right p-2 text-xs font-semibold text-slate-700">Qtd</th>
+                          <th className="text-right p-2 text-xs font-semibold text-slate-700">Preço Unit.</th>
+                          <th className="text-right p-2 text-xs font-semibold text-slate-700">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {lineItems.map((item) => (
+                          <tr key={item.id} className="border-t">
+                            <td className="p-2">{item.productName}</td>
+                            <td className="p-2 text-right">{item.quantity}</td>
+                            <td className="p-2 text-right">{formatCurrency(item.unitPrice)}</td>
+                            <td className="p-2 text-right font-medium">{formatCurrency(item.total)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
               {/* Totals */}
-              <div className="bg-slate-50 rounded-lg p-4 space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Subtotal</span>
-                  <span className="font-medium text-slate-900">{formatCurrency(subtotal)}</span>
+              {lineItems.length > 0 && (
+                <div className="bg-slate-50 rounded-lg p-4 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-600">Subtotal</span>
+                    <span className="font-medium text-slate-900">{formatCurrency(subtotal)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-600">Imposto (10%)</span>
+                    <span className="font-medium text-slate-900">{formatCurrency(tax)}</span>
+                  </div>
+                  <Separator />
+                  <div className="flex justify-between">
+                    <span className="font-semibold text-slate-900">Total</span>
+                    <span className="text-xl font-bold text-slate-900">{formatCurrency(total)}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Imposto (10%)</span>
-                  <span className="font-medium text-slate-900">{formatCurrency(tax)}</span>
-                </div>
-                <Separator />
-                <div className="flex justify-between">
-                  <span className="font-semibold text-slate-900">Total</span>
-                  <span className="text-xl font-bold text-slate-900">{formatCurrency(total)}</span>
-                </div>
-              </div>
+              )}
             </div>
           )}
 
@@ -341,7 +373,7 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
               </Button>
             )}
             
-            {currentStep < 6 ? (
+            {currentStep < 5 ? (
               <Button
                 type="button"
                 onClick={() => setCurrentStep(currentStep + 1)}

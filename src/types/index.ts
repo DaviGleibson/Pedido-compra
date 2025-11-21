@@ -25,9 +25,38 @@ export interface Buyer {
   department: string;
 }
 
+export interface Product {
+  codigo: number;
+  descricao: string;
+  gtin?: string;
+  marca_descricao: string;
+  valor_unitario: number;
+  valor_caixa: number;
+  qtd_por_caixa: number;
+  unidade_caixa: string;
+  estoqueAtual: number;
+  estoque_reservado: number;
+  estoque_disponivel: number;
+  tem_imagem: boolean;
+  grupo_id: number;
+  unidade: string;
+}
+
+export interface Brand {
+  id: string;
+  descricao: string;
+}
+
+export interface Category {
+  id: number;
+  descricao: string;
+  subgrupos?: Category[];
+}
+
 export interface ProductLineItem {
   id: string;
   productName: string;
+  productCode?: number;
   quantity: number;
   unitPrice: number;
   total: number;
