@@ -33,9 +33,9 @@
     /* Login component variables - Light theme */
     --color-bg: #ffffff;
     --color-bg-login: #1e40af;
-    --color-surface: #f8f9fa;
+    --color-surface: #ffffff;
     --color-muted-surface: #e9ecef;
-    --color-border: #dee2e6;
+    --color-border: #212529;
     --color-text-secondary: #6c757d;
     --color-text-primary: #212529;
     --color-heading: #000000;

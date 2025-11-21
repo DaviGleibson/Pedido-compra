@@ -4,7 +4,6 @@ import * as React from 'react'
 import { useState } from 'react'
 import Image from 'next/image';
 import { ThemeSwitcher } from '@/components/theme-switcher';
-import { useTheme } from 'next-themes';
 
 interface InputProps {
   label?: string;
@@ -36,7 +35,7 @@ const AppInput = (props: InputProps) => {
       <div className="relative w-full">
         <input
           type="text"
-          className="peer relative z-10 border-2 border-gray-300 h-13 w-full rounded-md bg-white px-4 font-thin outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-gray-50 focus:border-[#132d5b] placeholder:font-medium text-gray-900 placeholder:text-gray-500"
+          className="peer relative z-10 border-2 border-[var(--color-border)] h-13 w-full rounded-md bg-[var(--color-surface)] px-4 font-thin outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-[var(--color-bg)] placeholder:font-medium text-[var(--color-text-primary)] placeholder:text-[var(--color-text-secondary)]"
           placeholder={placeholder}
           onMouseMove={handleMouseMove}
           onMouseEnter={() => setIsHovering(true)}
@@ -48,13 +47,13 @@ const AppInput = (props: InputProps) => {
             <div
               className="absolute pointer-events-none top-0 left-0 right-0 h-[2px] z-20 rounded-t-md overflow-hidden"
               style={{
-                background: `radial-gradient(30px circle at ${mousePosition.x}px 0px, #132d5b 0%, transparent 70%)`,
+                background: `radial-gradient(30px circle at ${mousePosition.x}px 0px, var(--color-text-primary) 0%, transparent 70%)`,
               }}
             />
             <div
               className="absolute pointer-events-none bottom-0 left-0 right-0 h-[2px] z-20 rounded-b-md overflow-hidden"
               style={{
-                background: `radial-gradient(30px circle at ${mousePosition.x}px 2px, #132d5b 0%, transparent 70%)`,
+                background: `radial-gradient(30px circle at ${mousePosition.x}px 2px, var(--color-text-primary) 0%, transparent 70%)`,
               }}
             />
           </>
@@ -74,15 +73,10 @@ interface LoginComponentProps {
 }
 
 const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
-  const { theme, resolvedTheme } = useTheme();
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
-  // Cor de fundo: sempre branco por padrão
-  // Força branco independente do tema para garantir visibilidade
-  const backgroundColor = '#ffffff';
 
   const handleMouseMove = (e: React.MouseEvent) => {
     const leftSection = e.currentTarget.getBoundingClientRect();
@@ -126,13 +120,13 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
   ];
 
   return (
-    <div className="min-h-screen w-full fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ backgroundColor }}>
+    <div className="h-screen w-[100%] bg-[var(--color-bg)] flex items-center justify-center p-4 relative">
       {/* Theme Switcher Button */}
       <div className="absolute top-4 right-4 z-50 bg-white rounded-lg p-1 shadow-lg border border-gray-300">
         <ThemeSwitcher />
       </div>
 
-      <div className='card w-[80%] lg:w-[70%] md:w-[55%] flex justify-between h-[600px] bg-white rounded-lg shadow-xl overflow-hidden'>
+      <div className='card w-[80%] lg:w-[70%] md:w-[55%] flex justify-between h-[600px] bg-[var(--color-surface)]'>
         <div
           className='w-full lg:w-1/2 px-4 lg:px-16 left h-full relative overflow-hidden'
           onMouseMove={handleMouseMove}
@@ -150,8 +144,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
           <div className="form-container sign-in-container h-full z-10 relative">
             <form className='text-center py-10 md:py-20 grid gap-2 h-full' onSubmit={handleSubmit}>
               <div className='grid gap-4 md:gap-6 mb-2'>
-                <h1 className='text-3xl md:text-4xl font-extrabold text-gray-900'>Entrar</h1>
-                {/* Título em português */}
+                <h1 className='text-3xl md:text-4xl font-extrabold text-[var(--color-heading)]'>Entrar</h1>
                 <div className="social-container">
                   <div className="flex items-center justify-center">
                     <ul className="flex gap-3 md:gap-4">
@@ -161,14 +154,14 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
                             <a
                               href={social.href}
                               onClick={(e: React.MouseEvent<HTMLAnchorElement>) => e.preventDefault()}
-                              className={`w-[2.5rem] md:w-[3rem] h-[2.5rem] md:h-[3rem] bg-[#132d5b] rounded-full flex justify-center items-center relative z-[1] border-2 border-[#132d5b] overflow-hidden group hover:bg-[#1a3d6b] transition-colors`}
+                              className={`w-[2.5rem] md:w-[3rem] h-[2.5rem] md:h-[3rem] bg-[var(--color-bg-2)] rounded-full flex justify-center items-center relative z-[1] border-2 border-[var(--color-text-primary)] overflow-hidden group hover:bg-[var(--color-text-primary)] transition-colors`}
                             >
                               <div
                                 className={`absolute inset-0 w-full h-full ${
                                   social.gradient || social.bg
                                 } scale-y-0 origin-bottom transition-transform duration-500 ease-in-out group-hover:scale-y-100`}
                               />
-                              <span className="text-[1.5rem] text-white transition-all duration-500 ease-in-out z-[2] group-hover:text-white group-hover:rotate-y-360">
+                              <span className="text-[1.5rem] text-[var(--color-text-primary)] transition-all duration-500 ease-in-out z-[2] group-hover:text-[var(--color-bg)] group-hover:rotate-y-360">
                                 {social.icon}
                               </span>
                             </a>
@@ -178,7 +171,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
                     </ul>
                   </div>
                 </div>
-                <span className='text-sm text-gray-600'>ou use sua conta</span>
+                <span className='text-sm text-[var(--color-text-secondary)]'>ou use sua conta</span>
               </div>
               <div className='grid gap-4 items-center'>
                 <AppInput 
@@ -194,7 +187,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                 />
               </div>
-              <a href="#" className='font-light text-sm md:text-md text-gray-600 hover:text-gray-900 transition-colors'>Esqueceu sua senha?</a>
+              <a href="#" className='font-light text-sm md:text-md text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors'>Esqueceu sua senha?</a>
               
               {/* Credenciais de Teste */}
               <div className='bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2'>
@@ -208,7 +201,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
               <div className='flex gap-4 justify-center items-center'>
                 <button 
                   type="submit"
-                  className="group/button relative inline-flex justify-center items-center overflow-hidden rounded-md bg-[#132d5b] px-4 py-1.5 text-xs font-normal text-white transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg hover:shadow-[#132d5b]/50 hover:bg-[#1a3d6b] cursor-pointer"
+                  className="group/button relative inline-flex justify-center items-center overflow-hidden rounded-md bg-[var(--color-border)] px-4 py-1.5 text-xs font-normal text-white transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg hover:shadow-[var(--color-text-primary)] cursor-pointer"
                 >
                   <span className="text-sm px-2 py-1">Entrar</span>
                   <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-13deg)_translateX(-100%)] group-hover/button:duration-1000 group-hover/button:[transform:skew(-13deg)_translateX(100%)]">
@@ -227,7 +220,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
             height={1000}
             priority
             alt="Imagem do carrossel"
-            className="w-full h-full object-cover transition-transform duration-300 opacity-30 grayscale"
+            className="w-full h-full object-cover transition-transform duration-300 opacity-30"
           />
         </div>
       </div>
