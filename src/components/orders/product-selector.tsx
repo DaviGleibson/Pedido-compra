@@ -198,12 +198,15 @@ export function ProductSelector({
           {/* Filtro por Categoria */}
           <div>
             <label className="text-sm font-medium text-slate-700 mb-2 block">Categoria</label>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Select 
+              value={selectedCategory || "all"} 
+              onValueChange={(value) => setSelectedCategory(value === "all" ? "" : value)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Todas as categorias" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todas as categorias</SelectItem>
+                <SelectItem value="all">Todas as categorias</SelectItem>
                 {mockCategories.map((category) => (
                   <SelectItem key={category.id} value={category.id.toString()}>
                     {category.descricao}
