@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ShoppingCart, FileText, TrendingUp, Shield } from 'lucide-react';
 
-// Página principal em português
+// Página principal em português - Todos os textos traduzidos
 
 export default function Page() {
   return (
