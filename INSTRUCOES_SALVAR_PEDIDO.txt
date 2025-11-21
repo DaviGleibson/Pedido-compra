@@ -1,0 +1,575 @@
+================================================================================
+INSTRUÇÕES PARA SALVAR PEDIDO NO BANCO DE DADOS
+Cabeçalho e Detalhe
+================================================================================
+
+Este documento contém instruções detalhadas sobre como salvar um pedido no banco
+de dados, incluindo o cabeçalho (ecf_pre_venda_cabecalho) e os detalhes/itens
+(ecf_pre_venda_detalhe).
+
+
+================================================================================
+1. ESTRUTURA DAS TABELAS
+================================================================================
+
+1.1. TABELA: ecf_pre_venda_cabecalho (Cabeçalho do Pedido)
+-----------------------------------------------------------
+Campos principais:
+- id (AUTO_INCREMENT, PRIMARY KEY)
+- id_empresa (INT) - ID da empresa/emitente
+- id_top (INT) - ID do tipo de operação
+- id_cliente (INT) - ID do cliente
+- documento_cliente (VARCHAR) - CPF/CNPJ do cliente
+- nome_cliente (VARCHAR) - Nome do cliente
+- id_funcionario (INT) - ID do funcionário (padrão: 1)
+- id_tipo_pagamento (INT) - ID do tipo de pagamento
+- ccf (INT) - Contador de Cupom Fiscal (padrão: 0)
+- coo (INT) - Contador de Ordem de Operação (padrão: 0)
+- data_emissao (DATE) - Data de emissão do pedido
+- hora_emissao (TIME) - Hora de emissão do pedido
+- situacao (CHAR) - Situação do pedido (P=Pendente, C=Confirmado, S=Separado, E=Entregue, X=Cancelado)
+- hash_tripa (VARCHAR) - Hash de validação do pedido
+- total (DECIMAL) - Valor total do pedido
+- subtotal (DECIMAL) - Valor subtotal do pedido
+- valor_extenso (VARCHAR) - Valor total por extenso
+- observacao_pre_venda (TEXT) - Observações do pedido
+- excluido (TINYINT) - Flag de exclusão lógica (0=Não excluído, 1=Excluído)
+- id_usuario_insercao (INT) - ID do usuário que inseriu o pedido
+
+
+1.2. TABELA: ecf_pre_venda_detalhe (Itens do Pedido)
+-----------------------------------------------------
+Campos principais:
+- id (AUTO_INCREMENT, PRIMARY KEY)
+- id_produto (INT) - ID do produto
+- gtin_produto (VARCHAR) - Código GTIN/EAN do produto
+- id_pre_venda (INT) - ID do cabeçalho do pedido (FK)
+- quantidade (DECIMAL) - Quantidade em unidades
+- valor_unitario (DECIMAL) - Valor unitário do produto
+- valor_total (DECIMAL) - Valor total do item (quantidade * valor_unitario)
+- descricao_produto (VARCHAR) - Descrição do produto
+- unidade_produto (VARCHAR) - Unidade de medida (UN, KG, etc.)
+- id_top_item (INT) - ID do tipo de operação do item
+- qtd_estoque (DECIMAL) - Quantidade em estoque no momento da venda
+- qtd_estoque_reservado (DECIMAL) - Quantidade reservada
+- quantidade_caixa (DECIMAL) - Quantidade por caixa/fardo
+- unidade_produto_caixa (VARCHAR) - Unidade da caixa (FD, CX, etc.)
+- ncm (VARCHAR) - Código NCM do produto
+- ncmex (VARCHAR) - Código NCMEX do produto
+- item (INT) - Número sequencial do item no pedido
+
+
+================================================================================
+2. PROCESSO DE SALVAMENTO - PASSO A PASSO
+================================================================================
+
+2.1. PREPARAÇÃO DOS DADOS
+-------------------------
+Antes de salvar, você precisa ter:
+- Dados do cliente (id, nome, documento)
+- Lista de produtos (código, quantidade, preço, descrição, etc.)
+- Configurações (id_empresa, id_top, id_tipo_pagamento)
+- Observações (opcional)
+
+Estrutura de dados esperada:
+{
+  "cliente": {
+    "id": 1,
+    "nome": "Nome do Cliente",
+    "documento": "12345678900"
+  },
+  "produtos": [
+    {
+      "codigo": 100,
+      "descricao": "Produto A",
+      "quantity": 5,
+      "price": 10.50,
+      "qtd_por_caixa": 12,
+      "valor_unitario": 10.50,
+      "gtin": "7891234567890",
+      "unidade": "UN",
+      "unidade_caixa": "FD",
+      "ncm": "12345678",
+      "ncmex": "00"
+    }
+  ],
+  "configuracoes": {
+    "emitente": { "id": 1 },
+    "top": { "id": 1 },
+    "tipoPagamento": { "id": 1 }
+  },
+  "observacao_pre_venda": "Observação opcional"
+}
+
+
+2.2. VALIDAÇÕES NECESSÁRIAS (ANTES DE INSERIR)
+-----------------------------------------------
+IMPORTANTE: Sempre valide ANTES de iniciar a transação:
+
+1. Validar dados obrigatórios:
+   - Cliente deve existir e ter documento válido
+   - Lista de produtos não pode estar vazia
+   - Configurações devem estar completas
+
+2. Validar estoque (CRÍTICO):
+   - Para cada produto, verificar se há estoque suficiente
+   - Considerar: estoque_total - estoque_reservado = estoque_disponível
+   - Calcular quantidade total em unidades: quantidade_fardos * qtd_por_caixa
+   - Se não houver estoque suficiente, NÃO iniciar transação e retornar erro
+
+Exemplo de validação de estoque:
+SELECT id_produto, qtd_estoque, qtd_estoque_di, qtd_estoque_reservado 
+FROM estoque_produto 
+WHERE id_produto IN (?, ?, ?) AND id_filial = ?
+
+Para cada produto:
+  estoque_disponivel = (qtd_estoque_di OU qtd_estoque) - qtd_estoque_reservado
+  quantidade_solicitada = quantidade_fardos * qtd_por_caixa
+  
+  Se quantidade_solicitada > estoque_disponivel:
+    RETORNAR ERRO: "Estoque insuficiente"
+
+
+2.3. INICIAR TRANSAÇÃO
+----------------------
+IMPORTANTE: Use transações para garantir integridade dos dados.
+
+BEGIN TRANSACTION;
+-- ou
+START TRANSACTION;
+
+Configurar timeouts (recomendado):
+SET SESSION innodb_lock_wait_timeout = 60;
+SET SESSION lock_wait_timeout = 60;
+
+
+2.4. CALCULAR TOTAIS
+--------------------
+Calcular subtotal e total do pedido:
+
+subtotal = 0
+total = 0
+
+Para cada produto:
+  valor_item = produto.price * produto.quantity
+  subtotal += valor_item
+  total += valor_item
+
+
+2.5. GERAR DADOS AUXILIARES
+----------------------------
+- Data e hora atual:
+  data_emissao = DATA_ATUAL (formato: YYYY-MM-DD)
+  hora_emissao = HORA_ATUAL (formato: HH:MM:SS)
+
+- Hash da tripa (opcional, mas recomendado):
+  Gerar hash MD5 dos dados do pedido para validação
+  Exemplo: MD5(cliente_id + produtos_ids + total + data_emissao)
+
+- Valor por extenso (opcional):
+  Converter o valor total para extenso
+  Exemplo: "cem reais e cinquenta centavos"
+
+
+2.6. INSERIR CABEÇALHO DO PEDIDO
+---------------------------------
+INSERT INTO ecf_pre_venda_cabecalho (
+  id_empresa, id_top, id_cliente, documento_cliente, nome_cliente,
+  id_funcionario, id_tipo_pagamento, ccf, coo, data_emissao, hora_emissao,
+  situacao, hash_tripa, total, subtotal, valor_extenso, observacao_pre_venda,
+  excluido, id_usuario_insercao
+) VALUES (
+  ?,  -- id_empresa (configuracoes.emitente.id)
+  ?,  -- id_top (configuracoes.top.id)
+  ?,  -- id_cliente
+  ?,  -- documento_cliente
+  ?,  -- nome_cliente
+  ?,  -- id_funcionario (padrão: 1)
+  ?,  -- id_tipo_pagamento (configuracoes.tipoPagamento.id)
+  ?,  -- ccf (padrão: 0)
+  ?,  -- coo (padrão: 0)
+  ?,  -- data_emissao
+  ?,  -- hora_emissao
+  ?,  -- situacao (padrão: 'P')
+  ?,  -- hash_tripa
+  ?,  -- total
+  ?,  -- subtotal
+  ?,  -- valor_extenso
+  ?,  -- observacao_pre_venda
+  ?,  -- excluido (padrão: 0)
+  ?   -- id_usuario_insercao (padrão: 1)
+);
+
+IMPORTANTE: Guardar o ID retornado (insertId) para usar nos detalhes!
+
+
+2.7. INSERIR DETALHES DO PEDIDO
+--------------------------------
+Para cada produto na lista, inserir um registro na tabela de detalhes.
+
+Opção 1: Inserir um por um (para poucos itens)
+INSERT INTO ecf_pre_venda_detalhe (
+  id_produto, gtin_produto, id_pre_venda, quantidade, valor_unitario,
+  valor_total, descricao_produto, unidade_produto, id_top_item,
+  qtd_estoque, qtd_estoque_reservado, quantidade_caixa, unidade_produto_caixa,
+  ncm, ncmex, item
+) VALUES (
+  ?,  -- id_produto (produto.codigo)
+  ?,  -- gtin_produto (produto.gtin ou '')
+  ?,  -- id_pre_venda (ID retornado do cabeçalho)
+  ?,  -- quantidade (quantidade_total_unidades = quantity * qtd_por_caixa)
+  ?,  -- valor_unitario (produto.valor_unitario ou produto.price)
+  ?,  -- valor_total (produto.price * produto.quantity)
+  ?,  -- descricao_produto (produto.descricao ou produto.name)
+  ?,  -- unidade_produto (produto.unidade ou 'UN')
+  ?,  -- id_top_item (configuracoes.top.id)
+  ?,  -- qtd_estoque (produto.qtd_estoque ou 0)
+  ?,  -- qtd_estoque_reservado (quantidade_total_unidades)
+  ?,  -- quantidade_caixa (produto.qtd_por_caixa ou 1)
+  ?,  -- unidade_produto_caixa (produto.unidade_caixa ou 'FD')
+  ?,  -- ncm (produto.ncm ou '')
+  ?,  -- ncmex (produto.ncmex ou '')
+  ?   -- item (número sequencial: 1, 2, 3, ...)
+);
+
+Opção 2: Inserir em lote (recomendado para muitos itens)
+INSERT INTO ecf_pre_venda_detalhe (
+  id_produto, gtin_produto, id_pre_venda, quantidade, valor_unitario,
+  valor_total, descricao_produto, unidade_produto, id_top_item,
+  qtd_estoque, qtd_estoque_reservado, quantidade_caixa, unidade_produto_caixa,
+  ncm, ncmex, item
+) VALUES
+  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?),  -- Item 1
+  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?),  -- Item 2
+  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);  -- Item 3
+
+IMPORTANTE: Processar em lotes de 10-20 itens por vez para evitar timeout.
+
+
+2.8. ATUALIZAR ESTOQUE
+----------------------
+Após inserir os detalhes, atualizar o estoque dos produtos.
+
+IMPORTANTE: A lógica de atualização de estoque pode variar conforme o id_top:
+
+Se id_top = 1809 (ou conforme regra de negócio):
+  - Apenas RESERVAR estoque (não dar baixa)
+  UPDATE estoque_produto 
+  SET qtd_estoque_reservado = qtd_estoque_reservado + ?
+  WHERE id_produto = ? AND id_filial = ?;
+
+Caso contrário (outras TOPs):
+  - RESERVAR e DAR BAIXA no estoque
+  UPDATE estoque_produto 
+  SET qtd_estoque = qtd_estoque - ?,
+      qtd_estoque_reservado = qtd_estoque_reservado + ?
+  WHERE id_produto = ? AND id_filial = ?;
+
+IMPORTANTE: Processar em lotes para evitar timeout.
+
+
+2.9. COMMIT DA TRANSAÇÃO
+------------------------
+Se tudo ocorreu com sucesso:
+
+COMMIT;
+
+Retornar sucesso para o cliente com:
+- ID do pedido criado
+- Dados resumidos do pedido
+
+
+2.10. TRATAMENTO DE ERROS
+--------------------------
+Se ocorrer qualquer erro durante o processo:
+
+ROLLBACK;
+
+Retornar erro apropriado:
+- Erro de validação: 400 (Bad Request)
+- Erro de estoque: 400 (Bad Request)
+- Erro de timeout: 408 (Request Timeout)
+- Erro interno: 500 (Internal Server Error)
+
+
+================================================================================
+3. EXEMPLO DE CÓDIGO SQL COMPLETO
+================================================================================
+
+-- Exemplo de inserção completa (sem validações)
+
+-- 1. Inserir cabeçalho
+INSERT INTO ecf_pre_venda_cabecalho (
+  id_empresa, id_top, id_cliente, documento_cliente, nome_cliente,
+  id_funcionario, id_tipo_pagamento, ccf, coo, data_emissao, hora_emissao,
+  situacao, hash_tripa, total, subtotal, valor_extenso, observacao_pre_venda,
+  excluido, id_usuario_insercao
+) VALUES (
+  1,                    -- id_empresa
+  1,                    -- id_top
+  10,                   -- id_cliente
+  '12345678900',        -- documento_cliente
+  'João da Silva',      -- nome_cliente
+  1,                    -- id_funcionario
+  1,                    -- id_tipo_pagamento
+  0,                    -- ccf
+  0,                    -- coo
+  '2024-01-15',         -- data_emissao
+  '14:30:00',           -- hora_emissao
+  'P',                  -- situacao
+  'abc123def456',       -- hash_tripa
+  105.50,               -- total
+  105.50,               -- subtotal
+  'cento e cinco reais e cinquenta centavos',  -- valor_extenso
+  'Pedido urgente',     -- observacao_pre_venda
+  0,                    -- excluido
+  1                     -- id_usuario_insercao
+);
+
+-- Obter o ID do pedido inserido (usar LAST_INSERT_ID() ou equivalente)
+SET @id_pedido = LAST_INSERT_ID();
+
+-- 2. Inserir detalhes
+INSERT INTO ecf_pre_venda_detalhe (
+  id_produto, gtin_produto, id_pre_venda, quantidade, valor_unitario,
+  valor_total, descricao_produto, unidade_produto, id_top_item,
+  qtd_estoque, qtd_estoque_reservado, quantidade_caixa, unidade_produto_caixa,
+  ncm, ncmex, item
+) VALUES
+  (100, '7891234567890', @id_pedido, 60, 10.50, 52.50, 'Produto A', 'UN', 1, 100, 60, 12, 'FD', '12345678', '00', 1),
+  (101, '7891234567891', @id_pedido, 24, 8.75, 17.50, 'Produto B', 'UN', 1, 50, 24, 12, 'FD', '12345679', '00', 2),
+  (102, '7891234567892', @id_pedido, 36, 9.80, 35.50, 'Produto C', 'UN', 1, 80, 36, 12, 'FD', '12345680', '00', 3);
+
+-- 3. Atualizar estoque (exemplo para TOP diferente de 1809)
+UPDATE estoque_produto 
+SET qtd_estoque = qtd_estoque - 60,
+    qtd_estoque_reservado = qtd_estoque_reservado + 60
+WHERE id_produto = 100 AND id_filial = 1;
+
+UPDATE estoque_produto 
+SET qtd_estoque = qtd_estoque - 24,
+    qtd_estoque_reservado = qtd_estoque_reservado + 24
+WHERE id_produto = 101 AND id_filial = 1;
+
+UPDATE estoque_produto 
+SET qtd_estoque = qtd_estoque - 36,
+    qtd_estoque_reservado = qtd_estoque_reservado + 36
+WHERE id_produto = 102 AND id_filial = 1;
+
+
+================================================================================
+4. BOAS PRÁTICAS E RECOMENDAÇÕES
+================================================================================
+
+4.1. TRANSAÇÕES
+---------------
+- SEMPRE use transações para operações que envolvem múltiplas tabelas
+- Valide dados ANTES de iniciar a transação
+- Faça COMMIT apenas se tudo ocorrer com sucesso
+- Faça ROLLBACK em caso de qualquer erro
+- Configure timeouts apropriados para evitar travamentos
+
+4.2. VALIDAÇÃO DE ESTOQUE
+--------------------------
+- SEMPRE valide estoque ANTES de iniciar a transação
+- Considere estoque reservado na validação
+- Calcule corretamente a quantidade total em unidades
+- Retorne mensagens de erro claras quando estoque for insuficiente
+
+4.3. PERFORMANCE
+----------------
+- Use inserções em lote (batch insert) para múltiplos itens
+- Processe em lotes de 10-20 itens por vez
+- Atualize estoque em lotes também
+- Use índices nas tabelas (especialmente em id_pre_venda, id_produto)
+
+4.4. INTEGRIDADE DOS DADOS
+---------------------------
+- Use FOREIGN KEY constraints quando possível
+- Valide todos os IDs antes de inserir (cliente, produto, empresa, etc.)
+- Mantenha consistência entre cabeçalho e detalhes
+- Use exclusão lógica (campo excluido) ao invés de DELETE físico
+
+4.5. SEGURANÇA
+--------------
+- Use prepared statements (parâmetros ?) para evitar SQL injection
+- Valide e sanitize todos os dados de entrada
+- Registre logs de operações importantes
+- Use hash para validação de integridade dos dados
+
+4.6. TRATAMENTO DE ERROS
+-------------------------
+- Capture e trate todos os erros possíveis
+- Retorne mensagens de erro claras e específicas
+- Faça rollback em caso de erro
+- Registre erros em log para análise posterior
+
+
+================================================================================
+5. ESTRUTURA DE DADOS DE ENTRADA (JSON)
+================================================================================
+
+{
+  "cliente": {
+    "id": 10,
+    "nome": "João da Silva",
+    "documento": "12345678900",
+    "cpf_cnpj": "12345678900"
+  },
+  "produtos": [
+    {
+      "codigo": 100,
+      "descricao": "Produto A",
+      "name": "Produto A",
+      "quantity": 5,
+      "price": 10.50,
+      "valor_unitario": 10.50,
+      "qtd_por_caixa": 12,
+      "qtd_estoque": 100,
+      "gtin": "7891234567890",
+      "unidade": "UN",
+      "unidade_caixa": "FD",
+      "ncm": "12345678",
+      "ncmex": "00"
+    },
+    {
+      "codigo": 101,
+      "descricao": "Produto B",
+      "name": "Produto B",
+      "quantity": 2,
+      "price": 8.75,
+      "valor_unitario": 8.75,
+      "qtd_por_caixa": 12,
+      "qtd_estoque": 50,
+      "gtin": "7891234567891",
+      "unidade": "UN",
+      "unidade_caixa": "FD",
+      "ncm": "12345679",
+      "ncmex": "00"
+    }
+  ],
+  "configuracoes": {
+    "emitente": {
+      "id": 1,
+      "razao_social": "Empresa Exemplo LTDA"
+    },
+    "top": {
+      "id": 1,
+      "descricao": "Venda Normal"
+    },
+    "tipoPagamento": {
+      "id": 1,
+      "descricao": "Dinheiro"
+    }
+  },
+  "observacao_pre_venda": "Pedido urgente, entregar até amanhã"
+}
+
+
+================================================================================
+6. ESTRUTURA DE RESPOSTA DE SUCESSO
+================================================================================
+
+{
+  "success": true,
+  "message": "Pedido criado com sucesso",
+  "pedido": {
+    "id": 12345,
+    "cliente": "João da Silva",
+    "total": 105.50,
+    "itens": 2,
+    "data": "2024-01-15",
+    "hora": "14:30:00"
+  }
+}
+
+
+================================================================================
+7. ESTRUTURA DE RESPOSTA DE ERRO
+================================================================================
+
+{
+  "success": false,
+  "message": "Estoque insuficiente para o produto 'Produto A'. Disponível: 3 fardos (36 unidades), Solicitado: 5 fardos (60 unidades).",
+  "error": "ESTOQUE_INSUFICIENTE"
+}
+
+ou
+
+{
+  "success": false,
+  "message": "Dados obrigatórios não fornecidos",
+  "error": "VALIDATION_ERROR"
+}
+
+ou
+
+{
+  "success": false,
+  "message": "Timeout na criação do pedido. Tente novamente com menos produtos ou aguarde alguns minutos.",
+  "error": "TIMEOUT_ERROR"
+}
+
+
+================================================================================
+8. CHECKLIST DE IMPLEMENTAÇÃO
+================================================================================
+
+Antes de implementar, verifique:
+
+[ ] Estrutura das tabelas está correta
+[ ] Índices estão criados (id_pre_venda, id_produto, etc.)
+[ ] Validação de dados obrigatórios implementada
+[ ] Validação de estoque implementada (ANTES da transação)
+[ ] Cálculo de totais implementado
+[ ] Geração de hash da tripa implementada (opcional)
+[ ] Inserção do cabeçalho implementada
+[ ] Inserção dos detalhes implementada (com lote)
+[ ] Atualização de estoque implementada (com lógica por TOP)
+[ ] Transações implementadas (BEGIN, COMMIT, ROLLBACK)
+[ ] Tratamento de erros implementado
+[ ] Timeouts configurados
+[ ] Logs de debug implementados (opcional, para desenvolvimento)
+[ ] Testes realizados com diferentes cenários:
+    [ ] Pedido com 1 item
+    [ ] Pedido com múltiplos itens
+    [ ] Pedido com estoque insuficiente
+    [ ] Pedido com dados inválidos
+    [ ] Pedido com timeout (muitos itens)
+
+
+================================================================================
+9. OBSERVAÇÕES IMPORTANTES
+================================================================================
+
+- O campo "situacao" no cabeçalho controla o status do pedido:
+  * 'P' = Pendente (padrão ao criar)
+  * 'C' = Confirmado
+  * 'S' = Separado
+  * 'E' = Entregue
+  * 'X' = Cancelado
+
+- O campo "excluido" é usado para exclusão lógica (0 = ativo, 1 = excluído)
+  Sempre filtre por excluido = 0 ao buscar pedidos
+
+- A quantidade no detalhe deve ser em UNIDADES, não em fardos/caixas
+  Exemplo: 5 fardos * 12 unidades/fardo = 60 unidades
+
+- O campo "qtd_estoque_reservado" no detalhe deve ser igual à quantidade
+  do item (quantidade total em unidades)
+
+- A lógica de atualização de estoque pode variar conforme o id_top
+  Verifique as regras de negócio específicas do seu sistema
+
+- Para pedidos com muitos itens (100+), considere processar em lotes
+  menores para evitar timeout de transação
+
+
+================================================================================
+FIM DO DOCUMENTO
+================================================================================
+
+Este documento foi gerado com base na implementação do sistema E-Commerce.
+Para dúvidas ou sugestões, consulte o código-fonte em:
+backend/controllers/pedidoController.js
+
