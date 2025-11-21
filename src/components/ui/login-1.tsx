@@ -74,14 +74,15 @@ interface LoginComponentProps {
 }
 
 const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
-  const { theme } = useTheme();
+  const { theme, resolvedTheme } = useTheme();
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
-  // Cor de fundo baseada no tema: branco para light, azul para dark
-  const backgroundColor = theme === 'light' ? '#ffffff' : '#1e40af';
+  // Cor de fundo: sempre branco por padrão
+  // Força branco independente do tema para garantir visibilidade
+  const backgroundColor = '#ffffff';
 
   const handleMouseMove = (e: React.MouseEvent) => {
     const leftSection = e.currentTarget.getBoundingClientRect();
