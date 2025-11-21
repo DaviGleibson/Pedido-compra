@@ -120,7 +120,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
   ];
 
   return (
-    <div className="h-screen w-[100%] bg-[var(--color-bg)] flex items-center justify-center p-4 relative">
+    <div className="min-h-screen w-full fixed inset-0 flex items-center justify-center p-4" style={{ backgroundColor: '#132d5b', zIndex: 0 }}>
       {/* Theme Switcher Button */}
       <div className="absolute top-4 right-4 z-50 bg-[var(--color-surface)] rounded-lg p-1 shadow-lg border border-[var(--color-border)]">
         <ThemeSwitcher />
