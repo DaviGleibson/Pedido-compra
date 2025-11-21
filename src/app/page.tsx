@@ -42,6 +42,7 @@ export default function Page() {
             <br />
             <span className="text-slate-900">Pedidos de Compra</span>
           </h1>
+          {/* Título traduzido: "Simplifique suas Ordens de Compra" → "Simplifique Seus Pedidos de Compra" */}
           
           <p className="text-xl md:text-2xl text-slate-600 max-w-2xl mx-auto">
             Gerencie fornecedores, acompanhe pedidos e automatize seu processo de compras com nossa plataforma intuitiva.
