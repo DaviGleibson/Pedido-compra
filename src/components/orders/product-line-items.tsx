@@ -42,19 +42,19 @@ export function ProductLineItems({ items, onChange }: ProductLineItemsProps) {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'BRL',
     }).format(amount);
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-slate-900">Product Line Items</h3>
+        <h3 className="text-lg font-semibold text-slate-900">Itens do Pedido</h3>
         <Button type="button" onClick={addItem} size="sm" variant="outline">
           <Plus className="h-4 w-4 mr-1" />
-          Add Item
+          Adicionar Item
         </Button>
       </div>
 
@@ -63,9 +63,9 @@ export function ProductLineItems({ items, onChange }: ProductLineItemsProps) {
         <table className="w-full">
           <thead className="bg-slate-50">
             <tr>
-              <th className="text-left p-3 text-sm font-semibold text-slate-700">Product Name</th>
-              <th className="text-left p-3 text-sm font-semibold text-slate-700 w-24">Quantity</th>
-              <th className="text-left p-3 text-sm font-semibold text-slate-700 w-32">Unit Price</th>
+              <th className="text-left p-3 text-sm font-semibold text-slate-700">Nome do Produto</th>
+              <th className="text-left p-3 text-sm font-semibold text-slate-700 w-24">Quantidade</th>
+              <th className="text-left p-3 text-sm font-semibold text-slate-700 w-32">Preço Unitário</th>
               <th className="text-right p-3 text-sm font-semibold text-slate-700 w-32">Total</th>
               <th className="w-12"></th>
             </tr>
@@ -77,7 +77,7 @@ export function ProductLineItems({ items, onChange }: ProductLineItemsProps) {
                   <Input
                     value={item.productName}
                     onChange={(e) => updateItem(item.id, 'productName', e.target.value)}
-                    placeholder="Enter product name"
+                    placeholder="Digite o nome do produto"
                     required
                   />
                 </td>
@@ -139,7 +139,7 @@ export function ProductLineItems({ items, onChange }: ProductLineItemsProps) {
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Product Name</label>
+              <label className="text-sm font-medium text-slate-700">Nome do Produto</label>
               <Input
                 value={item.productName}
                 onChange={(e) => updateItem(item.id, 'productName', e.target.value)}
@@ -150,7 +150,7 @@ export function ProductLineItems({ items, onChange }: ProductLineItemsProps) {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Quantity</label>
+                <label className="text-sm font-medium text-slate-700">Quantidade</label>
                 <Input
                   type="number"
                   min="1"
@@ -160,7 +160,7 @@ export function ProductLineItems({ items, onChange }: ProductLineItemsProps) {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Unit Price</label>
+                <label className="text-sm font-medium text-slate-700">Preço Unitário</label>
                 <Input
                   type="number"
                   min="0"
@@ -185,7 +185,7 @@ export function ProductLineItems({ items, onChange }: ProductLineItemsProps) {
 
       {items.length === 0 && (
         <div className="text-center py-8 text-slate-500">
-          No items added yet. Click "Add Item" to get started.
+          Nenhum item adicionado ainda. Clique em "Adicionar Item" para começar.
         </div>
       )}
     </div>

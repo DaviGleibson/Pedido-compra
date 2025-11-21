@@ -13,7 +13,7 @@ interface OrderCardProps {
 
 export function OrderCard({ order, onView, onEdit, onDelete }: OrderCardProps) {
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('pt-BR', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
@@ -21,9 +21,9 @@ export function OrderCard({ order, onView, onEdit, onDelete }: OrderCardProps) {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'BRL',
     }).format(amount);
   };
 
@@ -42,19 +42,19 @@ export function OrderCard({ order, onView, onEdit, onDelete }: OrderCardProps) {
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-sm">
             <Building2 className="h-4 w-4 text-slate-400" />
-            <span className="text-slate-600">Supplier:</span>
+            <span className="text-slate-600">Fornecedor:</span>
             <span className="font-medium text-slate-900">{order.supplier.name}</span>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <User className="h-4 w-4 text-slate-400" />
-            <span className="text-slate-600">Buyer:</span>
+            <span className="text-slate-600">Comprador:</span>
             <span className="font-medium text-slate-900">{order.buyer.name}</span>
           </div>
         </div>
 
         <div className="pt-3 border-t border-slate-100">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-sm text-slate-600">Total Amount</span>
+            <span className="text-sm text-slate-600">Valor Total</span>
             <span className="text-xl font-bold text-slate-900">{formatCurrency(order.total)}</span>
           </div>
 
@@ -66,7 +66,7 @@ export function OrderCard({ order, onView, onEdit, onDelete }: OrderCardProps) {
               onClick={() => onView(order)}
             >
               <Eye className="h-4 w-4 mr-1" />
-              View
+              Ver
             </Button>
             <Button
               variant="outline"
@@ -75,7 +75,7 @@ export function OrderCard({ order, onView, onEdit, onDelete }: OrderCardProps) {
               onClick={() => onEdit(order)}
             >
               <Pencil className="h-4 w-4 mr-1" />
-              Edit
+              Editar
             </Button>
             <Button
               variant="outline"

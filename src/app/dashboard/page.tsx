@@ -99,7 +99,7 @@ export default function DashboardPage() {
               </div>
               <Button variant="outline" size="sm" onClick={handleLogout}>
                 <LogOut className="h-4 w-4 mr-2" />
-                Logout
+                Sair
               </Button>
             </div>
           </div>
@@ -110,26 +110,26 @@ export default function DashboardPage() {
       <main className="container mx-auto px-4 py-8">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">Purchase Orders</h1>
-          <p className="text-slate-600">Manage and track all your purchase orders</p>
+          <h1 className="text-4xl font-bold text-slate-900 mb-2">Pedidos de Compra</h1>
+          <p className="text-slate-600">Gerencie e acompanhe todos os seus pedidos de compra</p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-slate-200">
-            <div className="text-sm text-slate-600 mb-1">Total Orders</div>
+            <div className="text-sm text-slate-600 mb-1">Total de Pedidos</div>
             <div className="text-3xl font-bold text-slate-900">{orders.length}</div>
           </div>
           <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-slate-200">
-            <div className="text-sm text-slate-600 mb-1">Pending</div>
+            <div className="text-sm text-slate-600 mb-1">Pendentes</div>
             <div className="text-3xl font-bold text-amber-600">{getStatusCount('pending')}</div>
           </div>
           <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-slate-200">
-            <div className="text-sm text-slate-600 mb-1">Approved</div>
+            <div className="text-sm text-slate-600 mb-1">Aprovados</div>
             <div className="text-3xl font-bold text-blue-600">{getStatusCount('approved')}</div>
           </div>
           <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-slate-200">
-            <div className="text-sm text-slate-600 mb-1">Completed</div>
+            <div className="text-sm text-slate-600 mb-1">Concluídos</div>
             <div className="text-3xl font-bold text-emerald-600">{getStatusCount('completed')}</div>
           </div>
         </div>
@@ -140,7 +140,7 @@ export default function DashboardPage() {
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
               <Input
-                placeholder="Search by order number, supplier, or buyer..."
+                placeholder="Buscar por número do pedido, fornecedor ou comprador..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -149,14 +149,14 @@ export default function DashboardPage() {
             
             <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as OrderStatus | 'all')}>
               <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="Filter by status" />
+                <SelectValue placeholder="Filtrar por status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="draft">Draft</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="approved">Approved</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="all">Todos os Status</SelectItem>
+                <SelectItem value="draft">Rascunho</SelectItem>
+                <SelectItem value="pending">Pendente</SelectItem>
+                <SelectItem value="approved">Aprovado</SelectItem>
+                <SelectItem value="completed">Concluído</SelectItem>
               </SelectContent>
             </Select>
 
@@ -165,7 +165,7 @@ export default function DashboardPage() {
               className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700"
             >
               <Plus className="h-4 w-4 mr-2" />
-              New Order
+              Novo Pedido
             </Button>
           </div>
         </div>
@@ -186,11 +186,11 @@ export default function DashboardPage() {
         ) : (
           <div className="bg-white/80 backdrop-blur-sm rounded-xl p-12 border border-slate-200 text-center">
             <ShoppingCart className="h-16 w-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-slate-900 mb-2">No orders found</h3>
+            <h3 className="text-xl font-semibold text-slate-900 mb-2">Nenhum pedido encontrado</h3>
             <p className="text-slate-600 mb-6">
               {searchQuery || statusFilter !== 'all'
-                ? 'Try adjusting your filters'
-                : 'Get started by creating your first purchase order'}
+                ? 'Tente ajustar seus filtros'
+                : 'Comece criando seu primeiro pedido de compra'}
             </p>
             {!searchQuery && statusFilter === 'all' && (
               <Button
@@ -198,7 +198,7 @@ export default function DashboardPage() {
                 className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Create First Order
+                Criar Primeiro Pedido
               </Button>
             )}
           </div>
@@ -224,18 +224,18 @@ export default function DashboardPage() {
       <AlertDialog open={!!orderToDelete} onOpenChange={() => setOrderToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Purchase Order</AlertDialogTitle>
+            <AlertDialogTitle>Excluir Pedido de Compra</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete order {orderToDelete?.orderNumber}? This action cannot be undone.
+              Tem certeza que deseja excluir o pedido {orderToDelete?.orderNumber}? Esta ação não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
               className="bg-red-600 hover:bg-red-700"
             >
-              Delete
+              Excluir
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

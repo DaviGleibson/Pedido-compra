@@ -66,9 +66,9 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
   const { subtotal, tax, total } = calculateTotals();
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'BRL',
     }).format(amount);
   };
 
@@ -132,7 +132,7 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto">
         <SheetHeader>
-          <SheetTitle className="text-2xl">Create New Purchase Order</SheetTitle>
+          <SheetTitle className="text-2xl">Criar Novo Pedido de Compra</SheetTitle>
         </SheetHeader>
 
         <form onSubmit={(e) => handleSubmit(e, false)} className="mt-6 space-y-6">
@@ -166,11 +166,11 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
           {currentStep === 1 && (
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-semibold mb-4">Select Issuing Company</h3>
-                <Label htmlFor="company">Company *</Label>
+                <h3 className="text-lg font-semibold mb-4">Selecionar Empresa Emissora</h3>
+                <Label htmlFor="company">Empresa *</Label>
                 <Select value={companyId} onValueChange={setCompanyId}>
                   <SelectTrigger id="company">
-                    <SelectValue placeholder="Select a company" />
+                    <SelectValue placeholder="Selecione uma empresa" />
                   </SelectTrigger>
                   <SelectContent>
                     {mockCompanies.map((company) => (
@@ -188,11 +188,11 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
           {currentStep === 2 && (
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-semibold mb-4">Select Supplier</h3>
-                <Label htmlFor="supplier">Supplier *</Label>
+                <h3 className="text-lg font-semibold mb-4">Selecionar Fornecedor</h3>
+                <Label htmlFor="supplier">Fornecedor *</Label>
                 <Select value={supplierId} onValueChange={setSupplierId}>
                   <SelectTrigger id="supplier">
-                    <SelectValue placeholder="Select a supplier" />
+                    <SelectValue placeholder="Selecione um fornecedor" />
                   </SelectTrigger>
                   <SelectContent>
                     {mockSuppliers.map((supplier) => (
@@ -209,46 +209,46 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
           {/* Step 3: Buyer */}
           {currentStep === 3 && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold mb-4">Buyer Information</h3>
+              <h3 className="text-lg font-semibold mb-4">Informações do Comprador</h3>
               <div className="space-y-2">
-                <Label htmlFor="buyerName">Name *</Label>
+                <Label htmlFor="buyerName">Nome *</Label>
                 <Input
                   id="buyerName"
                   value={buyerName}
                   onChange={(e) => setBuyerName(e.target.value)}
-                  placeholder="John Smith"
+                  placeholder="João Silva"
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="buyerEmail">Email *</Label>
+                <Label htmlFor="buyerEmail">E-mail *</Label>
                 <Input
                   id="buyerEmail"
                   type="email"
                   value={buyerEmail}
                   onChange={(e) => setBuyerEmail(e.target.value)}
-                  placeholder="john.smith@company.com"
+                  placeholder="joao.silva@empresa.com"
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="buyerPhone">Phone *</Label>
+                <Label htmlFor="buyerPhone">Telefone *</Label>
                 <Input
                   id="buyerPhone"
                   type="tel"
                   value={buyerPhone}
                   onChange={(e) => setBuyerPhone(e.target.value)}
-                  placeholder="+1 (555) 123-4567"
+                  placeholder="+55 (11) 99999-9999"
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="buyerDepartment">Department *</Label>
+                <Label htmlFor="buyerDepartment">Departamento *</Label>
                 <Input
                   id="buyerDepartment"
                   value={buyerDepartment}
                   onChange={(e) => setBuyerDepartment(e.target.value)}
-                  placeholder="Operations"
+                  placeholder="Operações"
                   required
                 />
               </div>
@@ -258,9 +258,9 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
           {/* Step 4: Logged User */}
           {currentStep === 4 && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold mb-4">Created By</h3>
+              <h3 className="text-lg font-semibold mb-4">Criado Por</h3>
               <div className="bg-slate-50 rounded-lg p-4">
-                <Label className="text-sm text-slate-600">Logged User</Label>
+                <Label className="text-sm text-slate-600">Usuário Logado</Label>
                 <p className="text-lg font-medium text-slate-900 mt-1">{loggedUser}</p>
               </div>
             </div>
@@ -269,33 +269,33 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
           {/* Step 5: Payment */}
           {currentStep === 5 && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold mb-4">Payment Information</h3>
+              <h3 className="text-lg font-semibold mb-4">Informações de Pagamento</h3>
               <div className="space-y-2">
-                <Label htmlFor="paymentTerms">Payment Terms *</Label>
+                <Label htmlFor="paymentTerms">Termos de Pagamento *</Label>
                 <Select value={paymentTerms} onValueChange={(value) => setPaymentTerms(value as PaymentTerms)}>
                   <SelectTrigger id="paymentTerms">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="net_30">Net 30</SelectItem>
-                    <SelectItem value="net_60">Net 60</SelectItem>
-                    <SelectItem value="net_90">Net 90</SelectItem>
-                    <SelectItem value="due_on_receipt">Due on Receipt</SelectItem>
-                    <SelectItem value="prepaid">Prepaid</SelectItem>
+                    <SelectItem value="net_30">Líquido 30</SelectItem>
+                    <SelectItem value="net_60">Líquido 60</SelectItem>
+                    <SelectItem value="net_90">Líquido 90</SelectItem>
+                    <SelectItem value="due_on_receipt">Vencimento na Recepção</SelectItem>
+                    <SelectItem value="prepaid">Pré-pago</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="paymentType">Payment Type *</Label>
+                <Label htmlFor="paymentType">Tipo de Pagamento *</Label>
                 <Select value={paymentType} onValueChange={(value) => setPaymentType(value as PaymentType)}>
                   <SelectTrigger id="paymentType">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="credit_card">Credit Card</SelectItem>
-                    <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
-                    <SelectItem value="check">Check</SelectItem>
-                    <SelectItem value="cash">Cash</SelectItem>
+                    <SelectItem value="credit_card">Cartão de Crédito</SelectItem>
+                    <SelectItem value="bank_transfer">Transferência Bancária</SelectItem>
+                    <SelectItem value="check">Cheque</SelectItem>
+                    <SelectItem value="cash">Dinheiro</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -316,7 +316,7 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
                   <span className="font-medium text-slate-900">{formatCurrency(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Tax (10%)</span>
+                  <span className="text-slate-600">Imposto (10%)</span>
                   <span className="font-medium text-slate-900">{formatCurrency(tax)}</span>
                 </div>
                 <Separator />
@@ -337,7 +337,7 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
                 onClick={() => setCurrentStep(currentStep - 1)}
                 className="flex-1"
               >
-                Previous
+                Anterior
               </Button>
             )}
             
@@ -348,7 +348,7 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
                 disabled={!canProceedToNextStep()}
                 className="flex-1 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700"
               >
-                Next
+                Próximo
               </Button>
             ) : (
               <>
@@ -362,10 +362,10 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
                   {isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Saving...
+                      Salvando...
                     </>
                   ) : (
-                    'Save as Draft'
+                    'Salvar como Rascunho'
                   )}
                 </Button>
                 <Button
@@ -376,10 +376,10 @@ export function NewOrderForm({ open, onOpenChange, onSuccess }: NewOrderFormProp
                   {isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Submitting...
+                      Enviando...
                     </>
                   ) : (
-                    'Submit Order'
+                    'Enviar Pedido'
                   )}
                 </Button>
               </>

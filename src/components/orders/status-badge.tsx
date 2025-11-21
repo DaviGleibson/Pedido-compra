@@ -14,10 +14,10 @@ export function StatusBadge({ status }: StatusBadgeProps) {
   };
 
   const labels = {
-    draft: 'Draft',
-    pending: 'Pending',
-    approved: 'Approved',
-    completed: 'Completed',
+    draft: 'Rascunho',
+    pending: 'Pendente',
+    approved: 'Aprovado',
+    completed: 'Concluído',
   };
 
   return (

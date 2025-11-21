@@ -19,7 +19,7 @@ export function OrderDetailModal({ order, open, onOpenChange }: OrderDetailModal
   if (!order) return null;
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('pt-BR', {
       month: 'long',
       day: 'numeric',
       year: 'numeric',
@@ -29,25 +29,25 @@ export function OrderDetailModal({ order, open, onOpenChange }: OrderDetailModal
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'BRL',
     }).format(amount);
   };
 
   const paymentTermsLabels = {
-    net_30: 'Net 30',
-    net_60: 'Net 60',
-    net_90: 'Net 90',
-    due_on_receipt: 'Due on Receipt',
-    prepaid: 'Prepaid',
+    net_30: 'Líquido 30',
+    net_60: 'Líquido 60',
+    net_90: 'Líquido 90',
+    due_on_receipt: 'Vencimento na Recepção',
+    prepaid: 'Pré-pago',
   };
 
   const paymentTypeLabels = {
-    credit_card: 'Credit Card',
-    bank_transfer: 'Bank Transfer',
-    check: 'Check',
-    cash: 'Cash',
+    credit_card: 'Cartão de Crédito',
+    bank_transfer: 'Transferência Bancária',
+    check: 'Cheque',
+    cash: 'Dinheiro',
   };
 
   return (
@@ -66,7 +66,7 @@ export function OrderDetailModal({ order, open, onOpenChange }: OrderDetailModal
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
                 <Building2 className="h-4 w-4" />
-                Issuing Company
+                Empresa Emissora
               </div>
               <div className="bg-slate-50 rounded-lg p-4 space-y-1">
                 <p className="font-medium text-slate-900">{order.issuingCompany.name}</p>
@@ -79,7 +79,7 @@ export function OrderDetailModal({ order, open, onOpenChange }: OrderDetailModal
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
                 <Building2 className="h-4 w-4" />
-                Supplier
+                Fornecedor
               </div>
               <div className="bg-slate-50 rounded-lg p-4 space-y-1">
                 <p className="font-medium text-slate-900">{order.supplier.name}</p>
@@ -97,7 +97,7 @@ export function OrderDetailModal({ order, open, onOpenChange }: OrderDetailModal
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
                 <User className="h-4 w-4" />
-                Buyer Information
+                Informações do Comprador
               </div>
               <div className="bg-slate-50 rounded-lg p-4 space-y-1">
                 <p className="font-medium text-slate-900">{order.buyer.name}</p>
@@ -110,7 +110,7 @@ export function OrderDetailModal({ order, open, onOpenChange }: OrderDetailModal
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
                 <User className="h-4 w-4" />
-                Created By
+                Criado Por
               </div>
               <div className="bg-slate-50 rounded-lg p-4">
                 <p className="font-medium text-slate-900">{order.createdBy}</p>
@@ -125,7 +125,7 @@ export function OrderDetailModal({ order, open, onOpenChange }: OrderDetailModal
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
                 <CreditCard className="h-4 w-4" />
-                Payment Terms
+                Termos de Pagamento
               </div>
               <div className="bg-slate-50 rounded-lg p-4">
                 <p className="font-medium text-slate-900">{paymentTermsLabels[order.paymentTerms]}</p>
@@ -135,7 +135,7 @@ export function OrderDetailModal({ order, open, onOpenChange }: OrderDetailModal
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
                 <CreditCard className="h-4 w-4" />
-                Payment Type
+                Tipo de Pagamento
               </div>
               <div className="bg-slate-50 rounded-lg p-4">
                 <p className="font-medium text-slate-900">{paymentTypeLabels[order.paymentType]}</p>
@@ -147,14 +147,14 @@ export function OrderDetailModal({ order, open, onOpenChange }: OrderDetailModal
 
           {/* Line Items */}
           <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-slate-700">Product Line Items</h3>
+            <h3 className="text-sm font-semibold text-slate-700">Itens do Pedido</h3>
             <div className="border rounded-lg overflow-hidden">
               <table className="w-full">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-3 text-sm font-semibold text-slate-700">Product</th>
-                    <th className="text-right p-3 text-sm font-semibold text-slate-700">Qty</th>
-                    <th className="text-right p-3 text-sm font-semibold text-slate-700">Unit Price</th>
+                    <th className="text-left p-3 text-sm font-semibold text-slate-700">Produto</th>
+                    <th className="text-right p-3 text-sm font-semibold text-slate-700">Qtd</th>
+                    <th className="text-right p-3 text-sm font-semibold text-slate-700">Preço Unitário</th>
                     <th className="text-right p-3 text-sm font-semibold text-slate-700">Total</th>
                   </tr>
                 </thead>
@@ -179,7 +179,7 @@ export function OrderDetailModal({ order, open, onOpenChange }: OrderDetailModal
               <span className="font-medium text-slate-900">{formatCurrency(order.subtotal)}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-slate-600">Tax (10%)</span>
+              <span className="text-slate-600">Imposto (10%)</span>
               <span className="font-medium text-slate-900">{formatCurrency(order.tax)}</span>
             </div>
             <Separator />
@@ -193,11 +193,11 @@ export function OrderDetailModal({ order, open, onOpenChange }: OrderDetailModal
           <div className="grid md:grid-cols-2 gap-4 text-sm">
             <div className="flex items-center gap-2 text-slate-600">
               <Calendar className="h-4 w-4" />
-              <span>Created: {formatDate(order.createdAt)}</span>
+              <span>Criado em: {formatDate(order.createdAt)}</span>
             </div>
             <div className="flex items-center gap-2 text-slate-600">
               <Calendar className="h-4 w-4" />
-              <span>Updated: {formatDate(order.updatedAt)}</span>
+              <span>Atualizado em: {formatDate(order.updatedAt)}</span>
             </div>
           </div>
         </div>
