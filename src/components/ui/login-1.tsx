@@ -122,7 +122,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
   return (
     <div className="h-screen w-[100%] bg-[var(--color-bg)] flex items-center justify-center p-4 relative">
       {/* Theme Switcher Button */}
-      <div className="absolute top-4 right-4 z-50 bg-white rounded-lg p-1 shadow-lg border border-gray-300">
+      <div className="absolute top-4 right-4 z-50 bg-[var(--color-surface)] rounded-lg p-1 shadow-lg border border-[var(--color-border)]">
         <ThemeSwitcher />
       </div>
 
@@ -161,7 +161,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
                                   social.gradient || social.bg
                                 } scale-y-0 origin-bottom transition-transform duration-500 ease-in-out group-hover:scale-y-100`}
                               />
-                              <span className="text-[1.5rem] text-[var(--color-text-primary)] transition-all duration-500 ease-in-out z-[2] group-hover:text-[var(--color-bg)] group-hover:rotate-y-360">
+                              <span className="text-[1.5rem] text-white transition-all duration-500 ease-in-out z-[2] group-hover:text-white group-hover:rotate-y-360">
                                 {social.icon}
                               </span>
                             </a>
@@ -201,7 +201,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
               <div className='flex gap-4 justify-center items-center'>
                 <button 
                   type="submit"
-                  className="group/button relative inline-flex justify-center items-center overflow-hidden rounded-md bg-[var(--color-border)] px-4 py-1.5 text-xs font-normal text-white transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg hover:shadow-[var(--color-text-primary)] cursor-pointer"
+                  className="group/button relative inline-flex justify-center items-center overflow-hidden rounded-md bg-[var(--color-bg-2)] px-4 py-1.5 text-xs font-normal text-white transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg hover:shadow-[var(--color-bg-2)]/50 cursor-pointer"
                 >
                   <span className="text-sm px-2 py-1">Entrar</span>
                   <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-13deg)_translateX(-100%)] group-hover/button:duration-1000 group-hover/button:[transform:skew(-13deg)_translateX(100%)]">
