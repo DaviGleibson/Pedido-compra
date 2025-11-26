@@ -8,7 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "PurchaseFlow - Gerenciamento de Pedidos de Compra",
+  title: "Pedido de Compra - Gerenciamento de Pedidos",
   description: "Sistema moderno de gerenciamento de pedidos de compra para compras simplificadas",
 };
 

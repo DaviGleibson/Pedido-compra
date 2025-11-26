@@ -88,7 +88,7 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2">
               <ShoppingCart className="h-8 w-8 text-indigo-600" />
               <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
-                PurchaseFlow
+                Pedido de Compra
               </span>
             </div>
             

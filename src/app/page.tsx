@@ -15,7 +15,7 @@ export default function Page() {
           <div className="flex items-center gap-2">
             <ShoppingCart className="h-8 w-8 text-indigo-600" />
             <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
-              PurchaseFlow
+              Pedido de Compra
             </span>
           </div>
           <Link href="/login">
@@ -100,7 +100,7 @@ export default function Page() {
       {/* Footer */}
       <footer className="border-t bg-white/80 backdrop-blur-md mt-20">
         <div className="container mx-auto px-4 py-8 text-center text-slate-600">
-          <p>&copy; 2024 PurchaseFlow. Todos os direitos reservados.</p>
+        <p>&copy; 2024 Pedido de Compra. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>

@@ -1,4 +1,4 @@
-# PurchaseFlow - Purchase Order Management System
+# Pedido de Compra - Purchase Order Management System
 
 ## 🔐 CREDENCIAIS DE TESTE
 
