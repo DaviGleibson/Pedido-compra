@@ -1,8 +1,8 @@
 'use client'
 
 import * as React from 'react'
-import { useState } from 'react'
-import Image from 'next/image';
+import { useEffect, useState } from 'react'
+import Lottie from 'lottie-react'
 import { ThemeSwitcher } from '@/components/theme-switcher';
 
 interface InputProps {
@@ -77,6 +77,37 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
   const [isHovering, setIsHovering] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [animationData, setAnimationData] = useState<any | null>(null);
+  const [animationStatus, setAnimationStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadAnimation = async () => {
+      try {
+        const response = await fetch('/assets/animations/ceda3.json');
+        if (!response.ok) {
+          throw new Error('Arquivo ceda3.json não encontrado');
+        }
+        const data = await response.json();
+        if (isMounted) {
+          setAnimationData(data);
+          setAnimationStatus('ready');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar a animação ceda3.json:', error);
+        if (isMounted) {
+          setAnimationStatus('error');
+        }
+      }
+    };
+
+    loadAnimation();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     const leftSection = e.currentTarget.getBoundingClientRect();
@@ -212,16 +243,24 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
             </form>
           </div>
         </div>
-        <div className='hidden lg:block w-1/2 right h-full overflow-hidden'>
-          <Image
-            src='https://images.pexels.com/photos/7102037/pexels-photo-7102037.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
-            loader={({ src }) => src}
-            width={1000}
-            height={1000}
-            priority
-            alt="Imagem do carrossel"
-            className="w-full h-full object-cover transition-transform duration-300 opacity-30"
-          />
+        <div className='hidden lg:flex w-1/2 right h-full overflow-hidden bg-[var(--color-muted-surface)]'>
+          {animationStatus === 'ready' && animationData ? (
+            <Lottie
+              animationData={animationData}
+              loop
+              autoplay
+              style={{ width: '100%', height: '100%' }}
+            />
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-center px-6">
+              <div className="w-16 h-16 rounded-full border-4 border-dashed border-[var(--color-border)] animate-spin" />
+              <p className="text-sm text-[var(--color-text-secondary)]">
+                {animationStatus === 'error'
+                  ? 'Adicione o arquivo ceda3.json em public/assets/animations para exibir a animação.'
+                  : 'Carregando animação...'}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
