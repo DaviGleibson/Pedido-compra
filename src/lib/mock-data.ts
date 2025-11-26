@@ -58,7 +58,7 @@ export const mockSuppliers: Supplier[] = [
 export const mockOrders: PurchaseOrder[] = [
   {
     id: '1',
-    orderNumber: 'PO-2024-001',
+    orderNumber: 'PC-2024-001',
     status: 'approved',
     issuingCompany: mockCompanies[0],
     supplier: mockSuppliers[0],
@@ -95,7 +95,7 @@ export const mockOrders: PurchaseOrder[] = [
   },
   {
     id: '2',
-    orderNumber: 'PO-2024-002',
+    orderNumber: 'PC-2024-002',
     status: 'pending',
     issuingCompany: mockCompanies[1],
     supplier: mockSuppliers[1],
@@ -139,7 +139,7 @@ export const mockOrders: PurchaseOrder[] = [
   },
   {
     id: '3',
-    orderNumber: 'PO-2024-003',
+    orderNumber: 'PC-2024-003',
     status: 'draft',
     issuingCompany: mockCompanies[2],
     supplier: mockSuppliers[2],
@@ -169,7 +169,7 @@ export const mockOrders: PurchaseOrder[] = [
   },
   {
     id: '4',
-    orderNumber: 'PO-2024-004',
+    orderNumber: 'PC-2024-004',
     status: 'completed',
     issuingCompany: mockCompanies[0],
     supplier: mockSuppliers[3],
