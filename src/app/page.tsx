@@ -55,9 +55,15 @@ export default function Page() {
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-2">
-              Ver Demonstração
-            </Button>
+            <Link
+              href="https://www.g3tecnologia.com.br/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-2">
+                Ver Mais
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
