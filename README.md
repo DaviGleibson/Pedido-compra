@@ -71,3 +71,7 @@ Navegue para:
 - Tema escuro moderno
 - Validação de formulário
 - Notificações toast
+
+## Documentação complementar
+
+- [Guia de login, emitente e TOP do ambiente externo](./docs/login-config.md)
