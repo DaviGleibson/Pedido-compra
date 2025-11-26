@@ -33,7 +33,7 @@ export default function Page() {
           {/* Logo */}
           <div className="flex justify-center mb-4">
             <Image
-              src="/images/logo.png"
+              src="/images/logomarca.png"
               alt="Logo"
               width={200}
               height={80}
