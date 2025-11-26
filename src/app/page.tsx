@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ShoppingCart, FileText, TrendingUp, Shield } from 'lucide-react';
 
@@ -29,6 +30,18 @@ export default function Page() {
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 md:py-32">
         <div className="max-w-4xl mx-auto text-center space-y-8">
+          {/* Logo */}
+          <div className="flex justify-center mb-4">
+            <Image
+              src="/images/logo.png"
+              alt="Logo"
+              width={200}
+              height={80}
+              className="h-auto object-contain"
+              priority
+            />
+          </div>
+          
           <div className="inline-block">
             <span className="px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 text-sm font-semibold">
               Gerenciamento Moderno de Pedidos de Compra
