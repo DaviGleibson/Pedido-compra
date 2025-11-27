@@ -81,7 +81,7 @@ Navegue para:
 Para usar a API descrita em `DOCUMENTACAO_API_PEDIDO_COMPRA.txt`, crie um arquivo `.env.local` na raiz do projeto com:
 
 ```
-NEXT_PUBLIC_API_URL=http://localhost:3001/api
+NEXT_PUBLIC_API_URL=http://cabecaatacado.ddns.net:5000/api
 ```
 
-Substitua o host/porta conforme onde a API estiver rodando (ex.: `https://cabecaatacado.ddns.net:5000/api`). Depois reinicie `npm run dev`. Se a variável não estiver configurada, o projeto continua em modo demonstração com as credenciais locais.
+Se estiver rodando a API localmente, troque o host/porta para o endereço adequado (por exemplo `http://localhost:3001/api`). Depois reinicie `npm run dev`. Se a variável não estiver configurada, o projeto continua em modo demonstração com as credenciais locais.
