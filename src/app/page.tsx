@@ -37,7 +37,7 @@ export default function Page() {
               alt="Logo"
               width={200}
               height={80}
-              className="h-auto object-contain"
+              className="object-contain"
               priority
             />
           </div>
