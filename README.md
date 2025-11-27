@@ -75,3 +75,13 @@ Navegue para:
 ## Documentação complementar
 
 - [Guia de login, emitente e TOP do ambiente externo](./docs/login-config.md)
+
+## Configuração da API real
+
+Para usar a API descrita em `DOCUMENTACAO_API_PEDIDO_COMPRA.txt`, crie um arquivo `.env.local` na raiz do projeto com:
+
+```
+NEXT_PUBLIC_API_URL=http://localhost:3001/api
+```
+
+Substitua o host/porta conforme onde a API estiver rodando (ex.: `https://cabecaatacado.ddns.net:5000/api`). Depois reinicie `npm run dev`. Se a variável não estiver configurada, o projeto continua em modo demonstração com as credenciais locais.

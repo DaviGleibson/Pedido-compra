@@ -1,0 +1,290 @@
+================================================================================
+DOCUMENTAÇÃO COMPLETA - API PARA PÁGINA DE PEDIDO DE COMPRA
+================================================================================
+
+Este guia reúne todas as informações necessárias para criar uma nova página de
+pedido de compra em outro projeto, reaproveitando a API existente deste
+repositório. Inclui autenticação, cadastro de usuários, configuração de empresa
+e TOP, clientes, produtos, pedidos, além do fluxo recomendado.
+
+
+================================================================================
+1. VISÃO GERAL DA ARQUITETURA
+================================================================================
+
+- Frontend SPA (React) consumindo API REST.
+- Backend Node.js/Express conectado ao banco MySQL/MariaDB.
+- Autenticação JWT (token armazenado no localStorage).
+- Todas as rotas protegidas usam middleware `authenticate`.
+- Configurações (emitente, TOP, tipo pagamento) são persistidas no banco via
+  tabela `configuracoes_sistema` e replicadas no localStorage.
+
+
+================================================================================
+2. AUTENTICAÇÃO E CONTROLE DE ACESSO
+================================================================================
+
+2.1. LOGIN
+----------
+- Endpoint: `POST /api/auth/login`
+- Payload:
+  ```
+  {
+    "matricula": "funcionário ou documento do fornecedor",
+    "senha": "senha digitada",
+    "tipo": "funcionario" | "fornecedor"
+  }
+  ```
+- Funcionário:
+  * Usuário: tabela `funcionario`
+  * Senha: armazenada em MD5 (`createHash('md5')`)
+  * Retorna: token + dados (id, nome, email, matricula, id_nivel_acesso)
+- Fornecedor (cliente B2B):
+  * Usuário: tabela `fornecedor`
+  * Campo `numero_documento` (CPF/CNPJ)
+  * Senha: `senha_cotacao` (texto puro)
+  * Retorna: token + dados (id, razao_social, numero_documento)
+- Redirecionamento padrão: `/dashboard`
+
+2.2. CONSULTA DO USUÁRIO ATUAL
+------------------------------
+- Endpoint: `GET /api/auth/me`
+- Headers: `Authorization: Bearer <token>`
+- Retorna os dados desencriptados contidos no token (funcionário ou fornecedor).
+
+2.3. NÍVEIS DE ACESSO
+---------------------
+- Funcionário admin (`id_nivel_acesso = 1`): pode abrir `/configuracoes`,
+  alterar emitente/TOP/tipo de pagamento e demais preferências.
+- Funcionário comum: navega no catálogo e cria pedidos (desde que selecione um
+  cliente).
+- Fornecedor: vê e cria pedidos em nome da própria empresa (usa documento).
+
+
+================================================================================
+3. ENTIDADES E CONFIGURAÇÕES-CHAVE
+================================================================================
+
+3.1. CLIENTE (CONSUMIDOR FINAL)
+-------------------------------
+- As informações ficam na tabela `cliente`.
+- Seleção é obrigatória quando o usuário logado é funcionário (B2B).
+- Endpoints:
+  * `GET /api/pedido/clientes?termo=XYZ` → busca por nome, documento, telefone.
+  * `GET /api/pedido/debug/clientes` → diagnóstico (somente desenvolvimento).
+- Campos principais retornados:
+  ```
+  { id, nome, cpf_cnpj, email, telefone, endereco }
+  ```
+- Caso o funcionário não selecione um cliente válido, o backend recusa o pedido
+  (`cliente deve ser selecionado para funcionários`).
+
+3.2. FUNCIONÁRIO
+----------------
+- Tabela `funcionario` (ver `backend/database/create_tables.sql` para script).
+- Campos importantes: `id`, `nome`, `email`, `matricula`, `senha`, `id_nivel_acesso`.
+- Rota de login valida `matricula + senha (MD5)`.
+- Usuários padrão inseridos no script (admin e teste).
+
+3.3. FORNECEDOR / PARCEIRO
+--------------------------
+- Tabela `fornecedor` (já usada pelo catálogo).
+- Login usa `numero_documento + senha_cotacao`.
+- Após login, o documento do fornecedor serve como filtro para listar pedidos
+  (`listarPedidos` verifica tipo_usuario = fornecedor).
+
+3.4. EMITENTE (EMPRESA)
+-----------------------
+- Endpoint: `GET /api/emitente`
+- Dados: `id`, `razao_social`, etc.
+- Configuração padrão salva no backend/localStorage e usada para filtrar
+  produtos e montar pedidos.
+- Seleção/edit em `/configuracoes` (somente admin).
+
+3.5. TOP (TIPO DE OPERAÇÃO)
+---------------------------
+- Endpoint: `GET /api/top`
+- Campos: `id`, `descricao`, `tipo_movimentacao`, `nat_operacao`, entre outros.
+- Define o comportamento do pedido (reservar estoque, dar baixa, etc.).
+- TOP padrão salva em `configuracoes_sistema`.
+
+3.6. TIPOS DE PAGAMENTO
+-----------------------
+- Endpoint: `GET /api/tipo-pagamento/por-empresa?id_emitente=X`
+- Dependente do emitente selecionado.
+- Campo `tipoPagamentoPadrao` necessário para finalizar pedidos.
+
+
+================================================================================
+4. PRODUTOS, ESTOQUE E CATÁLOGO
+================================================================================
+
+4.1. CARREGAMENTO DO CATÁLOGO
+-----------------------------
+- Endpoint principal: `GET /api/produtos/ecommerce?id_emitente=<ID>&id_tipo_pagamento=<ID>`
+- Headers: `Authorization: Bearer <token>`
+- Retorna: array com campos como `codigo`, `descricao`, `gtin`, `marca_descricao`,
+  `valor_unitario`, `valor_caixa`, `qtd_por_caixa`, `unidade_caixa`,
+  `estoqueAtual`, `estoque_reservado`, `estoque_disponivel`, `tem_imagem`.
+- O frontend filtra/ordena por marca, grupo, busca textual, etc.
+
+4.2. IMAGENS DE PRODUTO
+-----------------------
+- Endpoint: `GET /api/produtos/imagem/:codigo`
+- Se não houver, o frontend mostra placeholder com gradiente.
+
+4.3. MARCAS E GRUPOS
+--------------------
+- Marcas: `GET /api/marcas`
+- Grupos: `GET /api/produtos/grupos`
+- Subgrupos de um grupo: `GET /api/produtos/grupos/:id/subgrupos`
+- Usados para filtros do catálogo e da futura página de pedido de compra.
+
+
+================================================================================
+5. PEDIDOS (PRE-VENDA)
+================================================================================
+
+5.1. CRIAR PEDIDO
+-----------------
+- Endpoint: `POST /api/pedido`
+- Payload esperado (resumo):
+  ```
+  {
+    "cliente": { "id": 1, "nome": "...", "documento": "..." },
+    "produtos": [
+      {
+        "codigo": 123,
+        "descricao": "...",
+        "quantity": 5,
+        "price": 10.50,
+        "qtd_por_caixa": 12,
+        ...
+      }
+    ],
+    "configuracoes": {
+      "emitente": { "id": 1 },
+      "top": { "id": 1809 },
+      "tipoPagamento": { "id": 1 }
+    },
+    "observacao_pre_venda": ""
+  }
+  ```
+- Fluxo interno (vide `pedidoController.js`):
+  1. Valida campos obrigatórios (cliente, produtos, configs).
+  2. Busca cliente no banco (CPF/CNPJ). Funcionário precisa selecionar um cliente
+     existente; fornecedores usam o próprio documento.
+  3. Calcula subtotais/totais, gera hash e valor por extenso.
+  4. **Valida estoque antes de iniciar transação**:
+     - `estoque_produto` (campos `qtd_estoque`, `qtd_estoque_di`, `qtd_estoque_reservado`).
+     - Considera `qtd_por_caixa` para converter fardos → unidades.
+  5. Inicia transação e insere cabeçalho (`ecf_pre_venda_cabecalho`).
+  6. Insere detalhes em lotes (`ecf_pre_venda_detalhe`).
+  7. Atualiza estoque conforme TOP (reservar/dar baixa).
+  8. Commit e retorno JSON com `{ success, message, pedido: { id, cliente, total, itens, data, hora } }`.
+  9. Rollback em qualquer erro ou timeout.
+
+5.2. BUSCAR PEDIDOS
+-------------------
+- `GET /api/pedido` (listar com paginação e filtros por tipo_usuario/id_usuario).
+- `GET /api/pedido/:id` (detalhes completo de um pedido).
+- `GET /api/pedido/verificar/:id` (existe/não existe).
+- `GET /api/pedido/debug/ultimos` (últimos 10 pedidos, uso interno).
+
+5.3. REGRAS DE ESTOQUE
+----------------------
+- Para TOP 1809: apenas reserva (`qtd_estoque_reservado += quantidade`).
+- Para demais TOPs: dá baixa e reserva simultaneamente
+  (`qtd_estoque -= quantidade` e `qtd_estoque_reservado += quantidade`).
+- Validação de estoque considera DI (disponível imediato) e reservas pendentes,
+  com mensagens detalhadas quando não há saldo suficiente.
+
+
+================================================================================
+6. FLUXO SUGERIDO PARA A NOVA PÁGINA DE PEDIDO DE COMPRA
+================================================================================
+
+1. **Login**
+   - Mostrar seletor de tipo (`funcionário`/`fornecedor`).
+   - Salvar token + dados do usuário.
+2. **Carregar Configurações**
+   - `GET /api/configuracao` para obter `emitente_padrao`, `top_padrao`,
+     `tipo_pagamento_padrao` e `delivery_settings`.
+   - Se usuário for admin, permitir ajustes em `/configuracoes`.
+3. **Selecionar Cliente**
+   - Funcionário abre modal/combo chamando `GET /api/pedido/clientes?termo=`.
+   - Fornecedor usa automaticamente seu documento (`req.user.numero_documento`).
+4. **Listar Produtos**
+   - Chamar `GET /api/produtos/ecommerce` com os parâmetros da configuração.
+   - Aplicar filtros (marca, grupo, busca), ordenação e paginação.
+5. **Montar Carrinho**
+   - O frontend controla quantidades por produto.
+   - Validar localmente se quantidade solicitada ≤ estoque disponível.
+6. **Salvar Pedido**
+   - Montar payload conforme seção 5.1.
+   - Enviar `POST /api/pedido`.
+   - Persistir o pedido retornado (id, total, itens) para histórico local.
+7. **Acompanhar Pedidos**
+   - Chamar `GET /api/pedido` (com `tipo_usuario` e `id_usuario`) para listar.
+   - Mostrar status baseado em `situacao` e coluna `STATUS`.
+
+
+================================================================================
+7. CHECKLIST PARA O NOVO PROJETO
+================================================================================
+
+- [ ] Copiar/instalar backend com mesma estrutura de tabelas (vide scripts em
+      `backend/database`).
+- [ ] Configurar `.env` com `JWT_SECRET`, credenciais do banco e API URLs.
+- [ ] Confirmar usuários iniciais (funcionário admin e fornecedor teste).
+- [ ] Testar login para ambos os tipos.
+- [ ] Configurar emitente/TOP/tipo pagamento via `/configuracoes`.
+- [ ] Validar endpoints de clientes, produtos e pedidos com token.
+- [ ] Implementar fluxos descritos no item 6 na nova página.
+- [ ] Reutilizar textos auxiliares:
+      * `INSTRUCOES_LOGIN_CONFIG.txt` – login, empresa e TOP.
+      * `INSTRUCOES_SALVAR_PEDIDO.txt` – cargas de cabeçalho/detalhe.
+      * `INSTRUCOES_DASHBOARD.txt` – UX do dashboard atual (filtros, cards).
+
+
+================================================================================
+8. REFERÊNCIAS DE CÓDIGO
+================================================================================
+
+| Função / Componente                 | Caminho                                      |
+|------------------------------------|----------------------------------------------|
+| Login page                         | `frontend/src/pages/Login.js`                |
+| Dashboard (catálogo)               | `frontend/src/pages/Home.js`                 |
+| Settings (configurações admin)     | `frontend/src/pages/SettingsPage.js`         |
+| Auth context                       | `frontend/src/contexts/AuthContext.js`       |
+| Cart context                       | `frontend/src/contexts/CartContext.js`       |
+| Pedido controller (backend)        | `backend/controllers/pedidoController.js`    |
+| Auth controller                    | `backend/controllers/authController.js`      |
+| Configuração controller            | `backend/controllers/configuracaoController.js` |
+| TOP controller                     | `backend/controllers/topController.js`       |
+| Emitente controller                | `backend/controllers/emitenteController.js`  |
+| Tipo pagamento controller          | `backend/controllers/tipoPagamentoController.js` |
+| Rotas de pedido                    | `backend/routes/pedido.js`                   |
+| Scripts de tabelas                 | `backend/database/create_tables.sql`         |
+
+
+================================================================================
+9. DICAS PARA ADAPTAÇÃO
+================================================================================
+
+- Modularize chamadas HTTP em um serviço (ex.: `apiClient`) para reaproveitar
+  headers e tratamento de erros na nova página.
+- Mantenha os mesmos nomes/estruturas de payload para garantir compatibilidade.
+- Caso os endpoints sejam hospedados em outro domínio, atualize `getApiUrl()`
+  (`frontend/src/utils/api.js`) ou crie variáveis de ambiente adequadas.
+- Use os documentos gerados neste repositório como anexos de onboarding para a
+  equipe que cuidará da nova pasta.
+
+
+================================================================================
+FIM DO DOCUMENTO
+================================================================================
+
+Com estas instruções você pode recriar a experiência de pedido de compra em
+outro projeto, mantendo o mesmo backend ou replicando-o conforme necessário.
+

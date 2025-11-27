@@ -68,8 +68,10 @@ const AppInput = (props: InputProps) => {
   )
 }
 
+type AccessType = 'funcionario' | 'fornecedor';
+
 interface LoginComponentProps {
-  onSubmit?: (email: string, password: string) => void;
+  onSubmit?: (identifier: string, password: string, accessType: AccessType) => void;
 }
 
 const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
@@ -77,6 +79,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
   const [isHovering, setIsHovering] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [accessType, setAccessType] = useState<AccessType>('funcionario');
   const [animationData, setAnimationData] = useState<any | null>(null);
   const [animationStatus, setAnimationStatus] = useState<'loading' | 'ready' | 'error'>('loading');
 
@@ -128,7 +131,7 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (onSubmit) {
-      onSubmit(email, password);
+      onSubmit(email, password, accessType);
     }
   };
 
@@ -204,10 +207,25 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
                 </div>
                 <span className='text-sm text-[var(--color-text-secondary)]'>ou use sua conta</span>
               </div>
+              <div className='text-left space-y-2'>
+                <label className='text-sm font-medium text-[var(--color-text-secondary)]'>Tipo de acesso</label>
+                <div className='grid grid-cols-2 gap-3'>
+                  {(['funcionario', 'fornecedor'] as AccessType[]).map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => setAccessType(type)}
+                      className={`rounded-md border px-3 py-2 text-sm font-medium transition-colors ${accessType === type ? 'border-[var(--color-border)] bg-[var(--color-bg-2)] text-white' : 'border-[var(--color-border)] text-[var(--color-text-primary)]'}`}
+                    >
+                      {type === 'funcionario' ? 'Funcionário' : 'Fornecedor'}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div className='grid gap-4 items-center'>
                 <AppInput 
-                  placeholder="E-mail" 
-                  type="email"
+                  placeholder={accessType === 'funcionario' ? 'Matrícula' : 'Documento (CPF/CNPJ)'} 
+                  type="text"
                   value={email}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                 />
@@ -224,8 +242,8 @@ const LoginComponent = ({ onSubmit }: LoginComponentProps = {}) => {
               <div className='bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2'>
                 <p className='text-xs font-semibold text-blue-900 mb-1'>Credenciais de Teste:</p>
                 <p className='text-xs text-blue-700'>
-                  <strong>E-mail:</strong> teste@exemplo.com<br />
-                  <strong>Senha:</strong> Senha123!
+                  <strong>Funcionário:</strong> Matrícula 123 / Senha123!<br />
+                  <strong>Fornecedor:</strong> 12345678900 / Senha123!
                 </p>
               </div>
 
